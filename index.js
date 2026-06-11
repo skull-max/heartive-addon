@@ -1,8 +1,7 @@
-const http = require('http');
-
+// Bulletproof Version (No text slashes allowed in the URLs)
 const MANIFEST = {
     id: "org.heartive.finalreset", 
-    version: "2.0.0",               
+    version: "2.1.0",               
     name: "Heartive Clean Player",
     description: "Bridges stream providers into Stremio safely",
     resources: ["stream"],
@@ -16,8 +15,8 @@ module.exports = (req, res) => {
     res.setHeader('Content-Type', 'application/json');
 
     const urlPath = req.url;
+    const slash = String.fromCharCode(47); // Generates a hardcoded "/"
 
-    // Handle both plain /manifest.json and links with extra tracking tags at the end
     if (urlPath === "/" || urlPath.includes("manifest.json")) {
         res.status(200).json(MANIFEST);
         return;
@@ -28,16 +27,15 @@ module.exports = (req, res) => {
         const fileName = urlParts[urlParts.length - 1];
         const imdbId = fileName.replace(".json", "");
 
+        // Hardcodes: https://vidsrc.cc
+        const vidsrcUrl = "https:" + slash + slash + "vidsrc.cc" + slash + "vidsrc" + slash + imdbId;
+        // Hardcodes: https://multiembed.mov
+        const embedUrl = "https:" + slash + slash + "multiembed.mov" + slash + "?video_id=" + imdbId;
+
         const streamData = {
             streams: [
-                {
-                    title: "🎬 Open Movie in VidSrc Player",
-                    externalUrl: "https://vidsrc.cc" + imdbId
-                },
-                {
-                    title: "🚀 Open Movie in SuperEmbed Player",
-                    externalUrl: "https://multiembed.mov" + imdbId
-                }
+                { title: "🎬 Open Movie in VidSrc Player", externalUrl: vidsrcUrl },
+                { title: "🚀 Open Movie in SuperEmbed Player", externalUrl: embedUrl }
             ]
         };
 
@@ -55,16 +53,14 @@ module.exports = (req, res) => {
         const season = idSegments[1] || "1";
         const episode = idSegments[2] || "1";
 
+        // Hardcodes: https://vidsrc.cc?s=1&e=1
+        const vidsrcSeries = "https:" + slash + slash + "vidsrc.cc" + slash + "vidsrc" + slash + showId + "?s=" + season + "&e=" + episode;
+        const embedSeries = "https:" + slash + slash + "multiembed.mov" + slash + "?video_id=" + showId + "&s=" + season + "&e=" + episode;
+
         const streamData = {
             streams: [
-                {
-                    title: "🎬 Open Series in VidSrc Player",
-                    externalUrl: "https://vidsrc.cc" + showId + "?s=" + season + "&e=" + episode
-                },
-                {
-                    title: "🚀 Open Series in SuperEmbed Player",
-                    externalUrl: "https://multiembed.mov" + showId + "&s=" + season + "&e=" + episode
-                }
+                { title: "🎬 Open Series in VidSrc Player", externalUrl: vidsrcSeries },
+                { title: "🚀 Open Series in SuperEmbed Player", externalUrl: embedSeries }
             ]
         };
 
