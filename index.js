@@ -1,8 +1,8 @@
-// Pure Vercel Cloud Version (No local server blocks to crash the build)
+// Cache-Busting Version (Forced Reset)
 const MANIFEST = {
-    id: "org.heartivemedia.addon",
-    version: "1.5.0",
-    name: "Heartive Open Source Stream",
+    id: "org.heartivemedia.addonv2", // Changed ID to completely bypass Stremio cache
+    version: "1.6.0",               // Bumped version
+    name: "Heartive Open Source Stream v2",
     description: "Bridges heartivetv providers into Stremio safely",
     resources: ["stream"],
     types: ["movie", "series"],
@@ -11,19 +11,16 @@ const MANIFEST = {
 };
 
 module.exports = (req, res) => {
-    // Set web headers for Stremio safety
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
     const urlPath = req.url;
 
-    // 1. Deliver Manifest
     if (urlPath === "/" || urlPath === "/manifest.json") {
         res.status(200).json(MANIFEST);
         return;
     }
 
-    // 2. Movie Streams
     if (urlPath.includes("/stream/movie/")) {
         const urlParts = urlPath.split("/");
         const fileName = urlParts[urlParts.length - 1];
@@ -46,7 +43,6 @@ module.exports = (req, res) => {
         return;
     }
 
-    // 3. TV Series Streams
     if (urlPath.includes("/stream/series/")) {
         const urlParts = urlPath.split("/");
         const fileName = urlParts[urlParts.length - 1];
