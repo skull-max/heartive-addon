@@ -1,4 +1,4 @@
-// Universal Stremio Addon Code (Works Locally and on Vercel)
+// Universal Stremio Addon Code (Complete Working Version)
 const http = require('http');
 
 const MANIFEST = {
@@ -14,27 +14,30 @@ const MANIFEST = {
 
 // Main Request Handler
 function handleRequest(req, res) {
+    // Set web headers so Stremio can read the data safely
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
     const urlPath = req.url;
 
+    // 1. Return the Manifest when Stremio checks the entry point
     if (urlPath === "/" || urlPath === "/manifest.json") {
         res.writeHead(200);
         res.end(JSON.stringify(MANIFEST));
         return;
     }
 
+    // 2. Return the Stream URLs when a specific movie is selected
     if (urlPath.includes("/stream/movie/")) {
         const streamData = {
             streams: [
                 {
-                    title: "Heartive Open Source Link 1",
-                    url: "https://googleapis.com"
+                    title: "🎬 Heartive Test Stream 1 (1080p MP4 Direct)",
+                    url: "https://zencdn.net"
                 },
                 {
-                    title: "Heartive Open Source Link 2 (Backup)",
-                    url: "https://googleapis.com"
+                    title: "📺 Heartive Live Test 2 (HLS/M3U8 Streaming)",
+                    url: "https://unified-streaming.com"
                 }
             ]
         };
@@ -43,12 +46,12 @@ function handleRequest(req, res) {
         return;
     }
 
+    // Fallback for unhandled pathways
     res.writeHead(404);
     res.end(JSON.stringify({ error: "Not Found" }));
 }
 
 // === THE EXECUTION ENGINE ===
-// This block creates the server thread using your C++ style port listener logic
 const server = http.createServer(handleRequest);
 
 // Listen on Vercel's cloud port, or fallback to local port 8080 for your phone
