@@ -1,9 +1,10 @@
-// Heartive Open Source Stremio Addon (Slash Fixed + TMDB Match)
+const http = require('http');
+
 const MANIFEST = {
-    id: "org.heartivemedia.addonv3", 
-    version: "1.7.0",               
-    name: "Heartive Open Source Stream v3",
-    description: "Bridges heartivetv providers into Stremio safely",
+    id: "org.heartive.finalreset", 
+    version: "2.0.0",               
+    name: "Heartive Clean Player",
+    description: "Bridges stream providers into Stremio safely",
     resources: ["stream"],
     types: ["movie", "series"],
     idPrefixes: ["tt"], 
@@ -16,7 +17,8 @@ module.exports = (req, res) => {
 
     const urlPath = req.url;
 
-    if (urlPath === "/" || urlPath === "/manifest.json") {
+    // Handle both plain /manifest.json and links with extra tracking tags at the end
+    if (urlPath === "/" || urlPath.includes("manifest.json")) {
         res.status(200).json(MANIFEST);
         return;
     }
