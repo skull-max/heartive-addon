@@ -1,11 +1,10 @@
-// Heartive Open Source Stremio Addon (Fixed String Concatenation)
 const http = require('http');
 
 const MANIFEST = {
     id: "org.heartivemedia.addon",
-    version: "1.3.0",
+    version: "1.4.0",
     name: "Heartive Open Source Stream",
-    description: "Bridges heartivetv.pages.dev stream providers into Stremio safely",
+    description: "Bridges heartivetv providers into Stremio safely",
     resources: ["stream"],
     types: ["movie", "series"],
     idPrefixes: ["tt"], 
@@ -18,14 +17,14 @@ function handleRequest(req, res) {
 
     const urlPath = req.url;
 
-    // 1. Deliver Manifest Configuration
+    // 1. Deliver Manifest
     if (urlPath === "/" || urlPath === "/manifest.json") {
         res.writeHead(200);
         res.end(JSON.stringify(MANIFEST));
         return;
     }
 
-    // 2. Generate Streams for Movies
+    // 2. Movie Streams
     if (urlPath.includes("/stream/movie/")) {
         const urlParts = urlPath.split("/");
         const fileName = urlParts[urlParts.length - 1];
@@ -34,11 +33,11 @@ function handleRequest(req, res) {
         const streamData = {
             streams: [
                 {
-                    title: "🎬 Open Movie in VidLink Player",
+                    title: "🎬 Open Movie in VidLink",
                     externalUrl: "https://vidlink.pro" + imdbId
                 },
                 {
-                    title: "📺 Open Movie in VidSrc Player",
+                    title: "📺 Open Movie in VidSrc",
                     externalUrl: "https://vidsrc.cc" + imdbId
                 }
             ]
@@ -49,13 +48,12 @@ function handleRequest(req, res) {
         return;
     }
 
-    // 3. Generate Streams for TV Series
+    // 3. TV Series Streams
     if (urlPath.includes("/stream/series/")) {
         const urlParts = urlPath.split("/");
         const fileName = urlParts[urlParts.length - 1];
         const fullId = fileName.replace(".json", "");
 
-        // Stremio splits series IDs by colons (e.g., tt1234567:1:5)
         const idSegments = fullId.split(":");
         const showId = idSegments[0];
         const season = idSegments[1] || "1";
@@ -64,11 +62,11 @@ function handleRequest(req, res) {
         const streamData = {
             streams: [
                 {
-                    title: "🎬 Open Series in VidLink (S" + season + " E" + episode + ")",
+                    title: "🎬 Open Series in VidLink",
                     externalUrl: "https://vidlink.pro" + showId + "/" + season + "/" + episode
                 },
                 {
-                    title: "📺 Open Series in VidSrc (S" + season + " E" + episode + ")",
+                    title: "📺 Open Series in VidSrc",
                     externalUrl: "https://vidsrc.cc" + showId + "?s=" + season + "&e=" + episode
                 }
             ]
