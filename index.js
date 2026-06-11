@@ -1,64 +1,92 @@
-// Universal Stremio Addon Code (Complete Working Version)
+// Heartive Open Source Stremio Addon (Final Complete Version)
 const http = require('http');
 
 const MANIFEST = {
     id: "org.heartivemedia.addon",
-    version: "1.0.0",
+    version: "1.1.0",
     name: "Heartive Open Source Stream",
-    description: "Bridges media content into Stremio",
+    description: "Bridges heartivetv.pages.dev stream providers into Stremio",
     resources: ["stream"],
-    types: ["movie"],
-    idPrefixes: ["tt"], 
+    types: ["movie", "series"], // Enabled both Movies and TV Shows
+    idPrefixes: ["tt"],         // Filters for standard IMDb IDs
     catalogs: []
 };
 
 // Main Request Handler
 function handleRequest(req, res) {
-    // Set web headers so Stremio can read the data safely
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
     const urlPath = req.url;
 
-    // 1. Return the Manifest when Stremio checks the entry point
+    // 1. Deliver Manifest Configuration
     if (urlPath === "/" || urlPath === "/manifest.json") {
         res.writeHead(200);
         res.end(JSON.stringify(MANIFEST));
         return;
     }
 
-    // 2. Return the Stream URLs when a specific movie is selected
-    if (urlPath.includes("/stream/movie/")) {
+    // 2. Generate Dynamic Streams based on the selected content
+    if (urlPath.includes("/stream/movie/") || urlPath.includes("/stream/series/")) {
+        
+        // Extract the clean IMDb ID (e.g., tt1234567) from the incoming request path
+        const urlParts = urlPath.split("/");
+        const fileName = urlParts[urlParts.length - 1];
+        const imdbId = fileName.replace(".json", "");
+
+        // Build stream URLs using the exact backend providers listed on heartivetv
         const streamData = {
             streams: [
                 {
-                    title: "🎬 Heartive Test Stream 1 (1080p MP4 Direct)",
-                    url: "https://zencdn.net"
+                    title: "🎬 Heartive Provider - VidLink (Multi-Host)",
+                    url: `https://vidlink.pro{imdbId}`
                 },
                 {
-                    title: "📺 Heartive Live Test 2 (HLS/M3U8 Streaming)",
-                    url: "https://unified-streaming.com"
+                    title: "📺 Heartive Provider - VidSrc (Auto-Player)",
+                    url: `https://vidsrc.to{imdbId}`
+                },
+                {
+                    title: "🚀 Heartive Provider - SuperEmbed (Fast)",
+                    url: `https://multiembed.mov{imdbId}`
                 }
             ]
         };
+
+        // For TV shows/series, adapt the URL routing path structure variables
+        if (urlPath.includes("/stream/series/")) {
+            // Note: Stremio provides series IDs formatted as "tt1234567:season:episode"
+            const idSegments = imdbId.split(":");
+            const showId = idSegments[0];
+            const season = idSegments[1] || "1";
+            const episode = idSegments[2] || "1";
+
+            streamData.streams = [
+                {
+                    title: `🎬 Heartive Series - VidLink (S${season}E${episode})`,
+                    url: `https://vidlink.pro{showId}/${season}/${episode}`
+                },
+                {
+                    title: `📺 Heartive Series - VidSrc (S${season}E${episode})`,
+                    url: `https://vidsrc.to{showId}/${season}/${episode}`
+                }
+            ];
+        }
+
         res.writeHead(200);
         res.end(JSON.stringify(streamData));
         return;
     }
 
-    // Fallback for unhandled pathways
+    // Route Fallback
     res.writeHead(404);
     res.end(JSON.stringify({ error: "Not Found" }));
 }
 
 // === THE EXECUTION ENGINE ===
 const server = http.createServer(handleRequest);
-
-// Listen on Vercel's cloud port, or fallback to local port 8080 for your phone
 const PORT = process.env.PORT || 8080;
 server.listen(PORT, () => {
     console.log(`=== SERVER IS LIVE ===`);
-    console.log(`Endpoint running on port ${PORT}`);
 });
 
 module.exports = handleRequest;
