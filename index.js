@@ -1,8 +1,8 @@
-// Cache-Busting Version (Forced Reset)
+// Heartive Open Source Stremio Addon (Slash Fixed + TMDB Match)
 const MANIFEST = {
-    id: "org.heartivemedia.addonv2", // Changed ID to completely bypass Stremio cache
-    version: "1.6.0",               // Bumped version
-    name: "Heartive Open Source Stream v2",
+    id: "org.heartivemedia.addonv3", 
+    version: "1.7.0",               
+    name: "Heartive Open Source Stream v3",
     description: "Bridges heartivetv providers into Stremio safely",
     resources: ["stream"],
     types: ["movie", "series"],
@@ -29,12 +29,12 @@ module.exports = (req, res) => {
         const streamData = {
             streams: [
                 {
-                    title: "🎬 Open Movie in VidLink Player",
-                    externalUrl: "https://vidlink.pro" + imdbId
+                    title: "🎬 Open Movie in VidSrc Player",
+                    externalUrl: "https://vidsrc.cc" + imdbId
                 },
                 {
-                    title: "📺 Open Movie in VidSrc Player",
-                    externalUrl: "https://vidsrc.cc" + imdbId
+                    title: "🚀 Open Movie in SuperEmbed Player",
+                    externalUrl: "https://multiembed.mov" + imdbId
                 }
             ]
         };
@@ -56,12 +56,12 @@ module.exports = (req, res) => {
         const streamData = {
             streams: [
                 {
-                    title: "🎬 Open Series in VidLink Player",
-                    externalUrl: "https://vidlink.pro" + showId + "/" + season + "/" + episode
+                    title: "🎬 Open Series in VidSrc Player",
+                    externalUrl: "https://vidsrc.cc" + showId + "?s=" + season + "&e=" + episode
                 },
                 {
-                    title: "📺 Open Series in VidSrc Player",
-                    externalUrl: "https://vidsrc.cc" + showId + "?s=" + season + "&e=" + episode
+                    title: "🚀 Open Series in SuperEmbed Player",
+                    externalUrl: "https://multiembed.mov" + showId + "&s=" + season + "&e=" + episode
                 }
             ]
         };
