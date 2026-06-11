@@ -1,47 +1,61 @@
-// Simple Local Stremio Addon Test
+// Universal Stremio Addon Code (Works Locally and on Vercel)
 const http = require('http');
 
 const MANIFEST = {
-    id: "org.heartivemedia.localtest",
+    id: "org.heartivemedia.addon",
     version: "1.0.0",
-    name: "Heartive Phone Test",
-    description: "Testing my addon locally on my Samsung",
+    name: "Heartive Open Source Stream",
+    description: "Bridges media content into Stremio",
     resources: ["stream"],
     types: ["movie"],
+    idPrefixes: ["tt"], 
     catalogs: []
 };
 
-// Create a local server thread
-const server = http.createServer((req, res) => {
-    // Set web headers so apps can access the data
+// Main Request Handler
+function handleRequest(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
-    console.log(`[Request Log]: User accessed pathway: ${req.url}`);
+    const urlPath = req.url;
 
-    if (req.url === '/' || req.url === '/manifest.json') {
+    if (urlPath === "/" || urlPath === "/manifest.json") {
         res.writeHead(200);
         res.end(JSON.stringify(MANIFEST));
-    } else if (req.url.includes('/stream/movie/')) {
+        return;
+    }
+
+    if (urlPath.includes("/stream/movie/")) {
         const streamData = {
             streams: [
                 {
-                    title: "Local Mobile Test - Stream 1",
+                    title: "Heartive Open Source Link 1",
+                    url: "https://googleapis.com"
+                },
+                {
+                    title: "Heartive Open Source Link 2 (Backup)",
                     url: "https://googleapis.com"
                 }
             ]
         };
         res.writeHead(200);
         res.end(JSON.stringify(streamData));
-    } else {
-        res.writeHead(404);
-        res.end(JSON.stringify({ error: "Not Found" }));
+        return;
     }
+
+    res.writeHead(404);
+    res.end(JSON.stringify({ error: "Not Found" }));
+}
+
+// === THE EXECUTION ENGINE ===
+// This block creates the server thread using your C++ style port listener logic
+const server = http.createServer(handleRequest);
+
+// Listen on Vercel's cloud port, or fallback to local port 8080 for your phone
+const PORT = process.env.PORT || 8080;
+server.listen(PORT, () => {
+    console.log(`=== SERVER IS LIVE ===`);
+    console.log(`Endpoint running on port ${PORT}`);
 });
 
-// Listen on port 8080
-server.listen(8080, () => {
-    console.log("=== SERVER IS LIVE ===");
-    console.log("Your local Stremio endpoint is: http://localhost:8080/manifest.json");
-    console.log("Press the Stop button in your editor to turn it off.");
-});
+module.exports = handleRequest;
