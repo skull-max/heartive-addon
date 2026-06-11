@@ -1,7 +1,7 @@
-// Bulletproof Version (No text slashes allowed in the URLs)
+// Robust Routing Cloud Version (Query String Safe)
 const MANIFEST = {
     id: "org.heartive.finalreset", 
-    version: "2.1.0",               
+    version: "2.2.0",               
     name: "Heartive Clean Player",
     description: "Bridges stream providers into Stremio safely",
     resources: ["stream"],
@@ -14,22 +14,23 @@ module.exports = (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
-    const urlPath = req.url;
-    const slash = String.fromCharCode(47); // Generates a hardcoded "/"
+    // Clean the URL path by stripping out any tracking elements (everything after the '?')
+    const cleanUrl = req.url.split('?')[0];
+    const slash = String.fromCharCode(47);
 
-    if (urlPath === "/" || urlPath.includes("manifest.json")) {
+    // 1. Deliver Manifest safely using the cleaned path string
+    if (cleanUrl === "/" || cleanUrl === "/manifest.json") {
         res.status(200).json(MANIFEST);
         return;
     }
 
-    if (urlPath.includes("/stream/movie/")) {
-        const urlParts = urlPath.split("/");
+    // 2. Movie Streams
+    if (cleanUrl.includes("/stream/movie/")) {
+        const urlParts = cleanUrl.split("/");
         const fileName = urlParts[urlParts.length - 1];
         const imdbId = fileName.replace(".json", "");
 
-        // Hardcodes: https://vidsrc.cc
         const vidsrcUrl = "https:" + slash + slash + "vidsrc.cc" + slash + "vidsrc" + slash + imdbId;
-        // Hardcodes: https://multiembed.mov
         const embedUrl = "https:" + slash + slash + "multiembed.mov" + slash + "?video_id=" + imdbId;
 
         const streamData = {
@@ -43,8 +44,9 @@ module.exports = (req, res) => {
         return;
     }
 
-    if (urlPath.includes("/stream/series/")) {
-        const urlParts = urlPath.split("/");
+    // 3. TV Series Streams
+    if (cleanUrl.includes("/stream/series/")) {
+        const urlParts = cleanUrl.split("/");
         const fileName = urlParts[urlParts.length - 1];
         const fullId = fileName.replace(".json", "");
 
@@ -53,7 +55,6 @@ module.exports = (req, res) => {
         const season = idSegments[1] || "1";
         const episode = idSegments[2] || "1";
 
-        // Hardcodes: https://vidsrc.cc?s=1&e=1
         const vidsrcSeries = "https:" + slash + slash + "vidsrc.cc" + slash + "vidsrc" + slash + showId + "?s=" + season + "&e=" + episode;
         const embedSeries = "https:" + slash + slash + "multiembed.mov" + slash + "?video_id=" + showId + "&s=" + season + "&e=" + episode;
 
