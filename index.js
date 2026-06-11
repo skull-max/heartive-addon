@@ -1,8 +1,7 @@
-const http = require('http');
-
+// Pure Vercel Cloud Version (No local server blocks to crash the build)
 const MANIFEST = {
     id: "org.heartivemedia.addon",
-    version: "1.4.0",
+    version: "1.5.0",
     name: "Heartive Open Source Stream",
     description: "Bridges heartivetv providers into Stremio safely",
     resources: ["stream"],
@@ -11,7 +10,8 @@ const MANIFEST = {
     catalogs: []
 };
 
-function handleRequest(req, res) {
+module.exports = (req, res) => {
+    // Set web headers for Stremio safety
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
@@ -19,8 +19,7 @@ function handleRequest(req, res) {
 
     // 1. Deliver Manifest
     if (urlPath === "/" || urlPath === "/manifest.json") {
-        res.writeHead(200);
-        res.end(JSON.stringify(MANIFEST));
+        res.status(200).json(MANIFEST);
         return;
     }
 
@@ -33,18 +32,17 @@ function handleRequest(req, res) {
         const streamData = {
             streams: [
                 {
-                    title: "🎬 Open Movie in VidLink",
+                    title: "🎬 Open Movie in VidLink Player",
                     externalUrl: "https://vidlink.pro" + imdbId
                 },
                 {
-                    title: "📺 Open Movie in VidSrc",
+                    title: "📺 Open Movie in VidSrc Player",
                     externalUrl: "https://vidsrc.cc" + imdbId
                 }
             ]
         };
 
-        res.writeHead(200);
-        res.end(JSON.stringify(streamData));
+        res.status(200).json(streamData);
         return;
     }
 
@@ -62,27 +60,19 @@ function handleRequest(req, res) {
         const streamData = {
             streams: [
                 {
-                    title: "🎬 Open Series in VidLink",
+                    title: "🎬 Open Series in VidLink Player",
                     externalUrl: "https://vidlink.pro" + showId + "/" + season + "/" + episode
                 },
                 {
-                    title: "📺 Open Series in VidSrc",
+                    title: "📺 Open Series in VidSrc Player",
                     externalUrl: "https://vidsrc.cc" + showId + "?s=" + season + "&e=" + episode
                 }
             ]
         };
 
-        res.writeHead(200);
-        res.end(JSON.stringify(streamData));
+        res.status(200).json(streamData);
         return;
     }
 
-    res.writeHead(404);
-    res.end(JSON.stringify({ error: "Not Found" }));
-}
-
-const server = http.createServer(handleRequest);
-const PORT = process.env.PORT || 8080;
-server.listen(PORT);
-
-module.exports = handleRequest;
+    res.status(404).json({ error: "Not Found" });
+};
