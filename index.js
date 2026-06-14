@@ -2,7 +2,7 @@
 const MANIFEST = {
     id: "org.heartive.finalreset", 
     version: "2.2.0",               
-    name: "Heartive Clean Player",
+    name: "skull Player",
     description: "Bridges stream providers into Stremio safely",
     resources: ["stream"],
     types: ["movie", "series"],
@@ -30,13 +30,13 @@ module.exports = (req, res) => {
         const fileName = urlParts[urlParts.length - 1];
         const imdbId = fileName.replace(".json", "");
 
-        const vidsrcUrl = "https:" + slash + slash + "vidsrc.cc" + slash + "vidsrc" + slash + imdbId;
+        const vidsrcUrl = "https:" + slash + slash + "vidsrc.cc" + slash + "?video_id=" + imdbId;
         const embedUrl = "https:" + slash + slash + "multiembed.mov" + slash + "?video_id=" + imdbId;
 
         const streamData = {
             streams: [
-                { title: "🎬 Open Movie in VidSrc Player", externalUrl: vidsrcUrl },
-                { title: "🚀 Open Movie in SuperEmbed Player", externalUrl: embedUrl }
+                { title: "🎬 Open Movie in stremio" , externalUrl: vidsrcUrl },
+                { title: "🚀 Open Movie in external Player", externalUrl: embedUrl }
             ]
         };
 
