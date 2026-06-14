@@ -1,49 +1,58 @@
-// Skull Multi-Route Final Browser Version (All 4 Streams Visible)
+// Skull Multi-Route Web-Safe Portal Router
+const fs = require('fs');
+const path = require('path');
+
 const MANIFEST = {
-    id: "org.heartive.skullpublicv3", // Brand new ID to completely bypass browser caching
-    version: "10.0.0", 
-    name: "skull Public Player",
-    description: "Multi-route stream player designed for Stremio Web compatibility",
+    id: "org.heartive.skulldirectv4", // New ID to clear Stremio's memory index caches
+    version: "11.0.0", 
+    name: "skull Multi-Player",
+    description: "Web-safe multi-routing cloud streamer portal layout",
     resources: ["stream"],
     types: ["movie", "series"],
     idPrefixes: ["tt"], 
     catalogs: []
 };
 
-module.exports = async (req, res) => {
+module.exports = (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
     const urlPartsList = req.url.split('?');
     const cleanUrl = urlPartsList.shift();
     const slash = String.fromCharCode(47);
+    const domain = req.headers.host;
 
-    // 1. Deliver Manifest
+    // 1. Deliver the Manifest Configuration
     if (cleanUrl === "/" || cleanUrl === "/manifest.json") {
         res.status(200).json(MANIFEST);
         return;
     }
 
-    // 2. Movie Streams Matrix
+    // 2. Safely serve the player.html file 
+    if (cleanUrl === "/player.html") {
+        try {
+            const filePath = path.join(process.cwd(), 'player.html');
+            const htmlContent = fs.readFileSync(filePath, 'utf8');
+            res.setHeader('Content-Type', 'text/html');
+            res.status(200).send(htmlContent);
+        } catch (error) {
+            res.status(500).send("Error loading player page");
+        }
+        return;
+    }
+
+    // 3. Movie Streams Route
     if (cleanUrl.includes("/stream/movie/")) {
         const streamParts = cleanUrl.split("/");
         const fileName = streamParts.pop();
         const imdbId = fileName.replace(".json", "");
 
-        // Clean Public Storage URLs (Zero Ads)
-        const publicStream1 = "https:" + slash + slash + "://githubusercontent.com" + slash + "biograf" + slash + "mock-media-api" + slash + "main" + slash + "videos" + slash + imdbId + ".m3u8";
-        const publicStream2 = "https:" + slash + slash + "://googleapis.com" + slash + "gtv-videos-bucket" + slash + "sample" + slash + "BigBuckBunny.mp4";
-        
-        // Backup Server URLs (May contain web ads)
-        const vidsrcUrl = "https:" + slash + slash + "vidsrc.me" + slash + "embed" + slash + "movie" + slash + imdbId;
-        const embedUrl = "https:" + slash + slash + "multiembed.mov" + slash + "?video_id=" + imdbId;
+        // Points directly to our web portal room to bypass Stremio file type blocks
+        const portalUrl = "https:" + slash + slash + domain + slash + "player.html?type=movie&id=" + imdbId;
 
         const streamData = {
             streams: [
-                { title: "🎬 Option 1: Stream Public Link 1 (Ad-Free Browser)", externalUrl: publicStream1 },
-                { title: "🚀 Option 2: Stream Public Link 2 (Ad-Free Browser)", externalUrl: publicStream2 },
-                { title: "🛸 Option 3: Launch Server 1 (VidSrc Player)", externalUrl: vidsrcUrl },
-                { title: "💀 Option 4: Launch Server 2 (SuperEmbed Player)", externalUrl: embedUrl }
+                { title: "🎬 Open in skull Native Player (100% Ad-Free)", externalUrl: portalUrl }
             ]
         };
 
@@ -51,27 +60,17 @@ module.exports = async (req, res) => {
         return;
     }
 
-    // 3. TV Series Streams Matrix
+    // 4. TV Series Streams Route
     if (cleanUrl.includes("/stream/series/")) {
         const streamParts = cleanUrl.split("/");
         const fileName = streamParts.pop();
         const fullId = fileName.replace(".json", "");
 
-        const idSegments = fullId.split(":");
-        const showId = idSegments.shift();
-        const season = idSegments.shift() || "1";
-        const episode = idSegments.shift() || "1";
-
-        const publicSeriesLink = "https:" + slash + slash + "://githubusercontent.com" + slash + "biograf" + slash + "mock-media-api" + slash + "main" + slash + "shows" + slash + showId + "-" + season + "-" + episode + ".m3u8";
-        
-        const vidsrcSeries = "https:" + slash + slash + "vidsrc.me" + slash + "embed" + slash + "tv" + slash + showId + slash + season + slash + episode;
-        const embedSeries = "https:" + slash + slash + "multiembed.mov" + slash + "?video_id=" + showId + "&s=" + season + "&e=" + episode;
+        const portalUrl = "https:" + slash + slash + domain + slash + "player.html?type=series&id=" + fullId;
 
         const streamData = {
             streams: [
-                { title: "🎬 Option 1: Stream Public Series (Ad-Free Browser)", externalUrl: publicSeriesLink },
-                { title: "🚀 Option 2: Launch Server 1 (VidSrc Player)", externalUrl: vidsrcSeries },
-                { title: "🛸 Option 3: Launch Server 2 (SuperEmbed Player)", externalUrl: embedSeries }
+                { title: "🎬 Open Series in skull Native Player (100% Ad-Free)", externalUrl: portalUrl }
             ]
         };
 
