@@ -18,14 +18,38 @@
             height: 100vh;
             overflow: hidden;
         }
+        h2 {
+            margin-bottom: 5px;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+        .server-buttons {
+            margin-bottom: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        .btn {
+            background-color: #1f2833;
+            color: #66fcf1;
+            border: 2px solid #66fcf1;
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        .btn:hover {
+            background-color: #66fcf1;
+            color: #0b0c10;
+        }
         .video-container {
             position: relative;
-            width: 90%;
-            max-width: 800px;
+            width: 95%;
+            max-width: 850px;
             height: 0;
-            padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+            padding-bottom: 56.25%; /* 16:9 aspect */
             background-color: #000000;
-            box-shadow: 0px 10px 30px rgba(0,0,0,0.7);
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.8);
             border-radius: 8px;
             overflow: hidden;
         }
@@ -37,38 +61,56 @@
             height: 100%;
             border: none;
         }
-        h2 {
-            margin-bottom: 15px;
-            font-weight: 400;
-            letter-spacing: 1px;
-        }
     </style>
 </head>
 <body>
 
     <h2>💀 Skull Player Portal</h2>
+    
+    <!-- Multi-Server Selector Panel -->
+    <div class="server-buttons">
+        <button class="btn" onclick="switchServer('vidsrc')">Server 1 (VidSrc)</button>
+        <button class="btn" onclick="switchServer('super')">Server 2 (SuperEmbed)</button>
+    </div>
+
     <div class="video-container">
-        <iframe id="video-frame" src="" allowfullscreen></iframe>
+        <!-- added referrerpolicy to bypass tracking protections -->
+        <iframe id="video-frame" src="" allowfullscreen referrerpolicy="no-referrer"></iframe>
     </div>
 
     <script>
-        // Extract the parameters from the website URL (?id=tt1234&type=movie)
         const urlParams = new URLSearchParams(window.location.search);
         const imdbId = urlParams.get('id');
         const mediaType = urlParams.get('type') || 'movie';
         const iframe = document.getElementById('video-frame');
 
-        // Automatically point to your streaming server layout
+        // Global link generation variables
+        let server1Url = "";
+        let server2Url = "";
+
         if (imdbId) {
             if (mediaType === 'movie') {
-                iframe.src = "https://vidsrc.me" + imdbId;
+                server1Url = "https://vidsrc.me" + imdbId;
+                server2Url = "https://multiembed.mov" + imdbId;
             } else {
-                // For TV Series, Stremio hands over IDs formatted as tt1234:1:1
                 const parts = imdbId.split(':');
                 const showId = parts[0];
                 const season = parts[1] || '1';
                 const episode = parts[2] || '1';
-                iframe.src = "https://vidsrc.me" + showId + "/" + season + "/" + episode;
+                server1Url = "https://vidsrc.me" + showId + "/" + season + "/" + episode;
+                server2Url = "https://multiembed.mov" + showId + "&s=" + season + "&e=" + episode;
+            }
+            
+            // Default to Server 1 on startup
+            iframe.src = server1Url;
+        }
+
+        // Button control logic
+        function switchServer(serverName) {
+            if (serverName === 'vidsrc') {
+                iframe.src = server1Url;
+            } else if (serverName === 'super') {
+                iframe.src = server2Url;
             }
         }
     </script>
