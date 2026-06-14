@@ -1,12 +1,12 @@
-// Final Player-Enabled Cloud Version
+// Robust Routing Cloud Version (Fixed Imports & Array Logic)
 const fs = require('fs');
 const path = require('path');
 
 const MANIFEST = {
     id: "org.heartive.finalreset", 
-    version: "2.5.0",               
+    version: "2.6.0", // Bumped version to push past any stuck servers
     name: "skull Player",
-    description: "Bridges stream providers into Stremio safely via Web Portal",
+    description: "Bridges stream providers into Stremio safely",
     resources: ["stream"],
     types: ["movie", "series"],
     idPrefixes: ["tt"], 
@@ -17,17 +17,17 @@ module.exports = (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
-    // Correctly split and grab the first item in the array
+    // Your brilliant fix: properly grabbing the text index out of the array
     const cleanUrl = req.url.split('?')[0];
     const slash = String.fromCharCode(47);
 
-    // 1. Deliver the Manifest
+    // 1. Deliver Manifest safely
     if (cleanUrl === "/" || cleanUrl === "/manifest.json") {
         res.status(200).json(MANIFEST);
         return;
     }
 
-    // 2. NEW: Serve the player.html file when requested
+    // 2. Deliver the lightweight player webpage file
     if (cleanUrl === "/player.html") {
         try {
             const filePath = path.join(process.cwd(), 'player.html');
@@ -46,6 +46,7 @@ module.exports = (req, res) => {
         const fileName = urlParts[urlParts.length - 1];
         const imdbId = fileName.replace(".json", "");
 
+        // Pointing straight to your embedded portal webpage link
         const portalUrl = "https:" + slash + slash + "heartive-player.vercel.app" + slash + "player.html?type=movie&id=" + imdbId;
 
         const streamData = {
