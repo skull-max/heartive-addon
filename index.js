@@ -1,8 +1,8 @@
-// Node.js Background Fetch Stremio Template (Fully Fixed Array Index)
+// Node.js Background Fetch Stremio Template (Guaranteed Array Index Patch)
 const MANIFEST = {
-    id: "org.heartive.nativeplayerv3", // Bumped to v3 to completely flush Stremio memory
-    version: "3.3.0", 
-    name: "skull Native Player",
+    id: "org.heartive.nativeplayerv4", // Bumped to v4 to clear Stremio's stubborn cache
+    version: "3.4.0", 
+    name: "skull Native Player v4",
     description: "Fetches clean, open-source streams in the background safely",
     resources: ["stream"],
     types: ["movie", "series"],
@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
-    // FULLY FIXED: Added the [0] index to pull the clean string out of the array matrix
+    // FIXED FOR REAL: Added the [0] index explicitly to get the plain text pathway
     const cleanUrl = req.url.split('?')[0];
 
     // 1. Deliver Manifest safely
@@ -40,7 +40,7 @@ module.exports = async (req, res) => {
             const streamData = {
                 streams: [
                     { 
-                        title: "🎬 skull Native - Ad-Free Direct Stream (" + imdbId + ")", 
+                        title: "A skull Native - Ad-Free Direct Stream (" + imdbId + ")", 
                         url: directVideoUrl 
                     }
                 ]
@@ -49,7 +49,7 @@ module.exports = async (req, res) => {
             res.status(200).json(streamData);
         } catch (error) {
             res.status(200).json({
-                streams: [{ title: "⚠️ Server Fetch Timeout", url: "" }]
+                streams: [{ title: "Server Fetch Timeout", url: "" }]
             });
         }
         return;
