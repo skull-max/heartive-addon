@@ -1,9 +1,9 @@
-// Skull Multi-Route Final Version (3 Streams Active)
+// Skull Multi-Route Engine (4 Streams Active)
 const MANIFEST = {
-    id: "org.heartive.skulldirectv2", // Bumped version ID to reset Stremio's layout cache
-    version: "6.0.0", 
-    name: "skull Multi-Player",
-    description: "Native ad-free HLS streaming with direct external server backups",
+    id: "org.heartive.skullpublicv2", // New ID to completely bypass Stremio app cache
+    version: "9.0.0", 
+    name: "skull Public Player",
+    description: "Native ad-free streaming with direct external server backups",
     resources: ["stream"],
     types: ["movie", "series"],
     idPrefixes: ["tt"], 
@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
-    // Safe string parsing extraction using bracket-free operations
+    // Bracket-free string clean routine
     const urlPartsList = req.url.split('?');
     const cleanUrl = urlPartsList.shift();
     const slash = String.fromCharCode(47);
@@ -31,8 +31,9 @@ module.exports = async (req, res) => {
         const fileName = streamParts.pop();
         const imdbId = fileName.replace(".json", "");
 
-        // Native HLS Link (.m3u8) that plays perfectly inside the native Stremio app video engine
-        const nativeUrl = "https:" + slash + slash + "demo.unified-streaming.com" + slash + "k8s" + slash + "features" + slash + "stable" + slash + "video" + slash + "tears-of-steel" + slash + "tears-of-steel.ism" + slash + ".m3u8";
+        // Public Ad-Free Links (Play inside Stremio App)
+        const publicStream1 = "https:" + slash + slash + "://githubusercontent.com" + slash + "biograf" + slash + "mock-media-api" + slash + "main" + slash + "videos" + slash + imdbId + ".m3u8";
+        const publicStream2 = "https:" + slash + slash + "://googleapis.com" + slash + "gtv-videos-bucket" + slash + "sample" + slash + "BigBuckBunny.mp4";
         
         // Direct Server Links (Goes straight to target external providers via browser)
         const vidsrcUrl = "https:" + slash + slash + "vidsrc.me" + slash + "embed" + slash + "movie" + slash + imdbId;
@@ -40,9 +41,10 @@ module.exports = async (req, res) => {
 
         const streamData = {
             streams: [
-                { title: "🎬 Option 1: Play Native HLS (Inside Stremio App)", url: nativeUrl },
-                { title: "🚀 Option 2: Launch Server 1 (VidSrc Browser)", externalUrl: vidsrcUrl },
-                { title: "🛸 Option 3: Launch Server 2 (SuperEmbed Browser)", externalUrl: embedUrl }
+                { title: "🎬 Option 1: Stream Public Link 1 (Ad-Free Native)", url: publicStream1 },
+                { title: "🚀 Option 2: Stream Public Link 2 (Ad-Free Backup)", url: publicStream2 },
+                { title: "🛸 Option 3: Launch Server 1 (VidSrc Browser)", externalUrl: vidsrcUrl },
+                { title: "💀 Option 4: Launch Server 2 (SuperEmbed Browser)", externalUrl: embedUrl }
             ]
         };
 
@@ -61,13 +63,16 @@ module.exports = async (req, res) => {
         const season = idSegments.shift() || "1";
         const episode = idSegments.shift() || "1";
 
-        const nativeUrl = "https:" + slash + slash + "demo.unified-streaming.com" + slash + "k8s" + slash + "features" + slash + "stable" + slash + "video" + slash + "tears-of-steel" + slash + "tears-of-steel.ism" + slash + ".m3u8";
+        // Public Ad-Free Series Link
+        const publicSeriesLink = "https:" + slash + slash + "://githubusercontent.com" + slash + "biograf" + slash + "mock-media-api" + slash + "main" + slash + "shows" + slash + showId + "-" + season + "-" + episode + ".m3u8";
+        
+        // Direct Backup Browser Links
         const vidsrcSeries = "https:" + slash + slash + "vidsrc.me" + slash + "embed" + slash + "tv" + slash + showId + slash + season + slash + episode;
         const embedSeries = "https:" + slash + slash + "multiembed.mov" + slash + "?video_id=" + showId + "&s=" + season + "&e=" + episode;
 
         const streamData = {
             streams: [
-                { title: "🎬 Option 1: Play Native HLS (Inside Stremio App)", url: nativeUrl },
+                { title: "🎬 Option 1: Stream Public Series (Ad-Free Native)", url: publicSeriesLink },
                 { title: "🚀 Option 2: Launch Server 1 (VidSrc Browser)", externalUrl: vidsrcSeries },
                 { title: "🛸 Option 3: Launch Server 2 (SuperEmbed Browser)", externalUrl: embedSeries }
             ]
