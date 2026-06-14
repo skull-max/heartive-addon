@@ -1,57 +1,81 @@
-// Node.js Background Fetch Stremio Template (Guaranteed Array Index Patch)
+// Bulletproof Bracket-Free Skull Portal Launcher
+const fs = require('fs');
+const path = require('path');
+
 const MANIFEST = {
-    id: "org.heartive.nativeplayerv4", // Bumped to v4 to clear Stremio's stubborn cache
-    version: "3.4.0", 
-    name: "skull Native Player v4",
-    description: "Fetches clean, open-source streams in the background safely",
+    id: "org.heartive.finalreset", 
+    version: "4.0.0", // Bumped version to force Stremio to clear its memory banks
+    name: "skull Player",
+    description: "Bridges stream providers into Stremio safely via Web Portal",
     resources: ["stream"],
     types: ["movie", "series"],
     idPrefixes: ["tt"], 
     catalogs: []
 };
 
-module.exports = async (req, res) => {
+module.exports = (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
-    // FIXED FOR REAL: Added the [0] index explicitly to get the plain text pathway
-    const cleanUrl = req.url.split('?')[0];
+    // Uses .shift() instead of brackets to safely extract the string path
+    const urlPartsList = req.url.split('?');
+    const cleanUrl = urlPartsList.shift();
+    
+    const slash = String.fromCharCode(47);
+    const domain = req.headers.host;
 
-    // 1. Deliver Manifest safely
+    // 1. Deliver the Manifest
     if (cleanUrl === "/" || cleanUrl === "/manifest.json") {
         res.status(200).json(MANIFEST);
         return;
     }
 
-    // 2. Movie Streams with Background Fetch Logic
+    // 2. Serve the player.html file
+    if (cleanUrl === "/player.html") {
+        try {
+            const filePath = path.join(process.cwd(), 'player.html');
+            const htmlContent = fs.readFileSync(filePath, 'utf8');
+            res.setHeader('Content-Type', 'text/html');
+            res.status(200).send(htmlContent);
+        } catch (error) {
+            res.status(500).send("Error loading player page");
+        }
+        return;
+    }
+
+    // 3. Movie Streams
     if (cleanUrl.includes("/stream/movie/")) {
-        const urlParts = cleanUrl.split("/");
-        const fileName = urlParts[urlParts.length - 1];
+        const streamParts = cleanUrl.split("/");
+        const fileName = streamParts.pop();
         const imdbId = fileName.replace(".json", "");
 
-        try {
-            // BACKGROUND FETCH: Requests the open data repository directory
-            const targetApiUrl = "https://githubusercontent.com";
-            await fetch(targetApiUrl);
-            
-            // Clean test streaming link that plays natively inside Stremio
-            const directVideoUrl = "https://googleapis.com";
+        const portalUrl = "https:" + slash + slash + domain + slash + "player.html?type=movie&id=" + imdbId;
 
-            const streamData = {
-                streams: [
-                    { 
-                        title: "A skull Native - Ad-Free Direct Stream (" + imdbId + ")", 
-                        url: directVideoUrl 
-                    }
-                ]
-            };
+        const streamData = {
+            streams: [
+                { title: "💀 Open in skull Lightweight Player", externalUrl: portalUrl }
+            ]
+        };
 
-            res.status(200).json(streamData);
-        } catch (error) {
-            res.status(200).json({
-                streams: [{ title: "Server Fetch Timeout", url: "" }]
-            });
-        }
+        res.status(200).json(streamData);
+        return;
+    }
+
+    // 4. TV Series Streams
+    if (cleanUrl.includes("/stream/series/")) {
+        const streamParts = cleanUrl.split("/");
+        const fileName = streamParts.pop();
+        const fullId = fileName.replace(".json", "");
+
+        const portalUrl = "https:" + slash + slash + domain + slash + "player.html?type=series&id=" + fullId;
+
+        const streamData = {
+            streams: [
+                { title: "💀 Open Series in skull Lightweight Player", externalUrl: portalUrl }
+            ]
+        };
+
+        res.status(200).json(streamData);
         return;
     }
 
