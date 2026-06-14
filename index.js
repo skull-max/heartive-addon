@@ -30,7 +30,8 @@ module.exports = (req, res) => {
         const fileName = urlParts[urlParts.length - 1];
         const imdbId = fileName.replace(".json", "");
 
-        const vidsrcUrl = "https:" + slash + slash + "vidbox.dev" + slash + "movie" + slash + imdbId;
+        // vidsrc.me natively supports standard IMDb tt IDs
+        const vidsrcUrl = "https:" + slash + slash + "vidsrc.me" + slash + "embed" + slash + "movie" + slash + imdbId;
         const embedUrl = "https:" + slash + slash + "multiembed.mov" + slash + "?video_id=" + imdbId;
 
         const streamData = {
@@ -55,7 +56,7 @@ module.exports = (req, res) => {
         const season = idSegments[1] || "1";
         const episode = idSegments[2] || "1";
 
-        const vidsrcSeries = "https:" + slash + slash + "vidbox.dev" + slash + "tv" + slash + showId + "?s=" + season + "&e=" + episode;
+        const vidsrcSeries = "https:" + slash + slash + "vidsrc.me" + slash + "embed" + slash + "tv" + slash + showId + slash + season + slash + episode;
         const embedSeries = "https:" + slash + slash + "multiembed.mov" + slash + "?video_id=" + showId + "&s=" + season + "&e=" + episode;
 
         const streamData = {
