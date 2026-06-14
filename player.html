@@ -6,7 +6,7 @@
     <title>Skull Launcher Portal</title>
     <style>
         body {
-            background-color: #0b0c10;
+            background-color: #050508;
             color: #ffffff;
             font-family: 'Segoe UI', Arial, sans-serif;
             margin: 0;
@@ -18,57 +18,70 @@
             height: 100vh;
         }
         .portal-card {
-            background-color: #1f2833;
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0px 10px 30px rgba(0,0,0,0.7);
+            background-color: #0d0e15;
+            padding: 35px;
+            border-radius: 16px;
+            box-shadow: 0px 0px 30px rgba(69, 243, 255, 0.2);
             text-align: center;
             width: 85%;
-            max-width: 450px;
-            border: 1px solid #45f3ff;
+            max-width: 420px;
+            border: 2px solid #45f3ff;
+        }
+        .skull-icon {
+            font-size: 50px;
+            margin-bottom: 10px;
+            text-shadow: 0 0 20px #45f3ff;
+            animation: pulse 2s infinite alternate;
+        }
+        @keyframes pulse {
+            from { text-shadow: 0 0 10px #45f3ff; }
+            to { text-shadow: 0 0 25px #45f3ff, 0 0 35px #45f3ff; }
         }
         h2 {
             margin-top: 0;
-            margin-bottom: 10px;
+            margin-bottom: 5px;
             color: #ffffff;
-            font-weight: 400;
-            letter-spacing: 2px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
         p {
-            color: #c5a880;
+            color: #8f94a5;
             font-size: 14px;
-            margin-bottom: 25px;
+            margin-bottom: 30px;
         }
         .launcher-btn {
             display: block;
-            background-color: #0b0c10;
+            background-color: #050508;
             color: #45f3ff;
             border: 2px solid #45f3ff;
-            padding: 15px;
-            margin: 12px 0;
-            border-radius: 6px;
-            font-size: 16px;
+            padding: 16px;
+            margin: 15px 0;
+            border-radius: 8px;
+            font-size: 15px;
             font-weight: bold;
             text-decoration: none;
-            transition: 0.3s;
-            cursor: pointer;
+            transition: 0.3s ease;
+            box-shadow: 0 0 5px rgba(69, 243, 255, 0.1);
         }
         .launcher-btn:hover {
             background-color: #45f3ff;
-            color: #0b0c10;
-            box-shadow: 0 0 15px #45f3ff;
+            color: #050508;
+            box-shadow: 0 0 20px #45f3ff;
+            transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
 
     <div class="portal-card">
-        <h2>💀 SKULL PORTAL</h2>
-        <p>Select a cloud link matrix to launch your movie stream:</p>
+        <div class="skull-icon">💀</div>
+        <h2>SKULL PORTAL</h2>
+        <p>Select a link matrix to stream your content:</p>
         
         <!-- Interactive Launcher Links -->
-        <a id="btn-server1" class="launcher-btn" href="#" target="_blank">🚀 Launch Server 1 (VidSrc)</a>
-        <a id="btn-server2" class="launcher-btn" href="#" target="_blank">🛸 Launch Server 2 (SuperEmbed)</a>
+        <a id="btn-server1" class="launcher-btn" href="#">🚀 LAUNCH SERVER 1 (VidSrc)</a>
+        <a id="btn-server2" class="launcher-btn" href="#">🛸 LAUNCH SERVER 2 (SuperEmbed)</a>
     </div>
 
     <script>
@@ -78,18 +91,25 @@
 
         const btn1 = document.getElementById('btn-server1');
         const btn2 = document.getElementById('btn-server2');
+        
+        // Anti-Clipboard Slash Generator
+        const s = String.fromCharCode(47); 
 
         if (imdbId) {
             if (mediaType === 'movie') {
-                btn1.href = "https://vidsrc.me" + imdbId;
-                btn2.href = "https://multiembed.mov" + imdbId;
+                // Hardcodes: https://vidsrc.me
+                btn1.href = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "movie" + s + imdbId;
+                // Hardcodes: https://multiembed.mov
+                btn2.href = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + imdbId;
             } else {
                 const parts = imdbId.split(':');
                 const showId = parts[0];
                 const season = parts[1] || '1';
                 const episode = parts[2] || '1';
-                btn1.href = "https://vidsrc.me" + showId + "/" + season + "/" + episode;
-                btn2.href = "https://multiembed.mov" + showId + "&s=" + season + "&e=" + episode;
+                
+                // Hardcodes: https://vidsrc.me
+                btn1.href = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "tv" + s + showId + s + season + s + episode;
+                btn2.href = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + showId + "&s=" + season + "&e=" + episode;
             }
         }
     </script>
