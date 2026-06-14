@@ -1,7 +1,7 @@
-// Node.js Background Fetch Stremio Template (Fixed Array Bug)
+// Node.js Background Fetch Stremio Template (Fully Fixed Array Index)
 const MANIFEST = {
-    id: "org.heartive.nativeplayerv2", // Bumped ID to fully reset Stremio cache
-    version: "3.2.0", 
+    id: "org.heartive.nativeplayerv3", // Bumped to v3 to completely flush Stremio memory
+    version: "3.3.0", 
     name: "skull Native Player",
     description: "Fetches clean, open-source streams in the background safely",
     resources: ["stream"],
@@ -14,7 +14,7 @@ module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
-    // Fixed: Added [0] to grab the clean path string instead of an array matrix
+    // FULLY FIXED: Added the [0] index to pull the clean string out of the array matrix
     const cleanUrl = req.url.split('?')[0];
 
     // 1. Deliver Manifest safely
@@ -40,7 +40,6 @@ module.exports = async (req, res) => {
             const streamData = {
                 streams: [
                     { 
-                        // Injects the actual movie ID to prove it detects your click live!
                         title: "🎬 skull Native - Ad-Free Direct Stream (" + imdbId + ")", 
                         url: directVideoUrl 
                     }
