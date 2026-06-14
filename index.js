@@ -1,12 +1,12 @@
-// Robust Routing Cloud Version (Fixed Imports & Array Logic)
+// Bulletproof Dynamic Cloud Architecture
 const fs = require('fs');
 const path = require('path');
 
 const MANIFEST = {
     id: "org.heartive.finalreset", 
-    version: "2.6.0", // Bumped version to push past any stuck servers
+    version: "2.7.0",               
     name: "skull Player",
-    description: "Bridges stream providers into Stremio safely",
+    description: "Bridges stream providers into Stremio safely via Web Portal",
     resources: ["stream"],
     types: ["movie", "series"],
     idPrefixes: ["tt"], 
@@ -17,17 +17,20 @@ module.exports = (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
-    // Your brilliant fix: properly grabbing the text index out of the array
+    // Strips the query tracking tags cleanly out of the string matrix
     const cleanUrl = req.url.split('?')[0];
     const slash = String.fromCharCode(47);
+    
+    // Automatically grabs your live domain url link string from the browser head
+    const domain = req.headers.host;
 
-    // 1. Deliver Manifest safely
+    // 1. Deliver the Manifest
     if (cleanUrl === "/" || cleanUrl === "/manifest.json") {
         res.status(200).json(MANIFEST);
         return;
     }
 
-    // 2. Deliver the lightweight player webpage file
+    // 2. Serve the player.html file
     if (cleanUrl === "/player.html") {
         try {
             const filePath = path.join(process.cwd(), 'player.html');
@@ -46,8 +49,8 @@ module.exports = (req, res) => {
         const fileName = urlParts[urlParts.length - 1];
         const imdbId = fileName.replace(".json", "");
 
-        // Pointing straight to your embedded portal webpage link
-        const portalUrl = "https:" + slash + slash + "heartive-player.vercel.app" + slash + "player.html?type=movie&id=" + imdbId;
+        // Dynamically links to your hosted player without hardcoding domain strings
+        const portalUrl = "https:" + slash + slash + domain + slash + "player.html?type=movie&id=" + imdbId;
 
         const streamData = {
             streams: [
@@ -65,7 +68,7 @@ module.exports = (req, res) => {
         const fileName = urlParts[urlParts.length - 1];
         const fullId = fileName.replace(".json", "");
 
-        const portalUrl = "https:" + slash + slash + "heartive-player.vercel.app" + slash + "player.html?type=series&id=" + fullId;
+        const portalUrl = "https:" + slash + slash + domain + slash + "player.html?type=series&id=" + fullId;
 
         const streamData = {
             streams: [
