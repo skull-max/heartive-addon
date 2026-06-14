@@ -1,7 +1,7 @@
 // Robust Routing Cloud Version (Query String Safe)
 const MANIFEST = {
     id: "org.heartive.finalreset", 
-    version: "2.3.0",               
+    version: "2.2.0",               
     name: "skull Player",
     description: "Bridges stream providers into Stremio safely",
     resources: ["stream"],
