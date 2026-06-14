@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skull Web Player</title>
+    <title>Skull Launcher Portal</title>
     <style>
         body {
             background-color: #0b0c10;
@@ -16,101 +16,80 @@
             align-items: center;
             justify-content: center;
             height: 100vh;
-            overflow: hidden;
+        }
+        .portal-card {
+            background-color: #1f2833;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0px 10px 30px rgba(0,0,0,0.7);
+            text-align: center;
+            width: 85%;
+            max-width: 450px;
+            border: 1px solid #45f3ff;
         }
         h2 {
-            margin-bottom: 5px;
+            margin-top: 0;
+            margin-bottom: 10px;
+            color: #ffffff;
             font-weight: 400;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
         }
-        .server-buttons {
-            margin-bottom: 15px;
-            display: flex;
-            gap: 10px;
+        p {
+            color: #c5a880;
+            font-size: 14px;
+            margin-bottom: 25px;
         }
-        .btn {
-            background-color: #1f2833;
-            color: #66fcf1;
-            border: 2px solid #66fcf1;
-            padding: 8px 16px;
-            cursor: pointer;
-            border-radius: 4px;
+        .launcher-btn {
+            display: block;
+            background-color: #0b0c10;
+            color: #45f3ff;
+            border: 2px solid #45f3ff;
+            padding: 15px;
+            margin: 12px 0;
+            border-radius: 6px;
+            font-size: 16px;
             font-weight: bold;
-            transition: 0.2s;
+            text-decoration: none;
+            transition: 0.3s;
+            cursor: pointer;
         }
-        .btn:hover {
-            background-color: #66fcf1;
+        .launcher-btn:hover {
+            background-color: #45f3ff;
             color: #0b0c10;
-        }
-        .video-container {
-            position: relative;
-            width: 95%;
-            max-width: 850px;
-            height: 0;
-            padding-bottom: 56.25%; /* 16:9 aspect */
-            background-color: #000000;
-            box-shadow: 0px 10px 30px rgba(0,0,0,0.8);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-        iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
+            box-shadow: 0 0 15px #45f3ff;
         }
     </style>
 </head>
 <body>
 
-    <h2>💀 Skull Player Portal</h2>
-    
-    <!-- Multi-Server Selector Panel -->
-    <div class="server-buttons">
-        <button class="btn" onclick="switchServer('vidsrc')">Server 1 (VidSrc)</button>
-        <button class="btn" onclick="switchServer('super')">Server 2 (SuperEmbed)</button>
-    </div>
-
-    <div class="video-container">
-        <!-- added referrerpolicy to bypass tracking protections -->
-        <iframe id="video-frame" src="" allowfullscreen referrerpolicy="no-referrer"></iframe>
+    <div class="portal-card">
+        <h2>💀 SKULL PORTAL</h2>
+        <p>Select a cloud link matrix to launch your movie stream:</p>
+        
+        <!-- Interactive Launcher Links -->
+        <a id="btn-server1" class="launcher-btn" href="#" target="_blank">🚀 Launch Server 1 (VidSrc)</a>
+        <a id="btn-server2" class="launcher-btn" href="#" target="_blank">🛸 Launch Server 2 (SuperEmbed)</a>
     </div>
 
     <script>
         const urlParams = new URLSearchParams(window.location.search);
         const imdbId = urlParams.get('id');
         const mediaType = urlParams.get('type') || 'movie';
-        const iframe = document.getElementById('video-frame');
 
-        // Global link generation variables
-        let server1Url = "";
-        let server2Url = "";
+        const btn1 = document.getElementById('btn-server1');
+        const btn2 = document.getElementById('btn-server2');
 
         if (imdbId) {
             if (mediaType === 'movie') {
-                server1Url = "https://vidsrc.me" + imdbId;
-                server2Url = "https://multiembed.mov" + imdbId;
+                btn1.href = "https://vidsrc.me" + imdbId;
+                btn2.href = "https://multiembed.mov" + imdbId;
             } else {
                 const parts = imdbId.split(':');
                 const showId = parts[0];
                 const season = parts[1] || '1';
                 const episode = parts[2] || '1';
-                server1Url = "https://vidsrc.me" + showId + "/" + season + "/" + episode;
-                server2Url = "https://multiembed.mov" + showId + "&s=" + season + "&e=" + episode;
-            }
-            
-            // Default to Server 1 on startup
-            iframe.src = server1Url;
-        }
-
-        // Button control logic
-        function switchServer(serverName) {
-            if (serverName === 'vidsrc') {
-                iframe.src = server1Url;
-            } else if (serverName === 'super') {
-                iframe.src = server2Url;
+                btn1.href = "https://vidsrc.me" + showId + "/" + season + "/" + episode;
+                btn2.href = "https://multiembed.mov" + showId + "&s=" + season + "&e=" + episode;
             }
         }
     </script>
