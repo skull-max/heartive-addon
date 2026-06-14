@@ -1,82 +1,62 @@
-// Bulletproof Dynamic Cloud Architecture
-const fs = require('fs');
-const path = require('path');
-
+// Node.js Background Fetch Stremio Template
 const MANIFEST = {
     id: "org.heartive.finalreset", 
-    version: "2.7.0",               
-    name: "skull Player",
-    description: "Bridges stream providers into Stremio safely via Web Portal",
+    version: "3.0.0", // Bumped version to reset Stremio app layout cache
+    name: "skull Native Player",
+    description: "Fetches clean, open-source streams in the background safely",
     resources: ["stream"],
     types: ["movie", "series"],
     idPrefixes: ["tt"], 
     catalogs: []
 };
 
-module.exports = (req, res) => {
+module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
-    // Strips the query tracking tags cleanly out of the string matrix
     const cleanUrl = req.url.split('?')[0];
-    const slash = String.fromCharCode(47);
-    
-    // Automatically grabs your live domain url link string from the browser head
-    const domain = req.headers.host;
 
-    // 1. Deliver the Manifest
+    // 1. Deliver Manifest safely
     if (cleanUrl === "/" || cleanUrl === "/manifest.json") {
         res.status(200).json(MANIFEST);
         return;
     }
 
-    // 2. Serve the player.html file
-    if (cleanUrl === "/player.html") {
-        try {
-            const filePath = path.join(process.cwd(), 'player.html');
-            const htmlContent = fs.readFileSync(filePath, 'utf8');
-            res.setHeader('Content-Type', 'text/html');
-            res.status(200).send(htmlContent);
-        } catch (error) {
-            res.status(500).send("Error loading player page");
-        }
-        return;
-    }
-
-    // 3. Movie Streams
+    // 2. Movie Streams with Background Fetch Logic
     if (cleanUrl.includes("/stream/movie/")) {
         const urlParts = cleanUrl.split("/");
         const fileName = urlParts[urlParts.length - 1];
         const imdbId = fileName.replace(".json", "");
 
-        // Dynamically links to your hosted player without hardcoding domain strings
-        const portalUrl = "https:" + slash + slash + domain + slash + "player.html?type=movie&id=" + imdbId;
+        try {
+            // BACKGROUND FETCH: Your server requests data from an open directory API
+            // (We point to a public sample video database for testing)
+            const targetApiUrl = "https://githubusercontent.com";
+            
+            const response = await fetch(targetApiUrl);
+            const data = await response.json();
 
-        const streamData = {
-            streams: [
-                { title: "🎬 Open in skull Lightweight Player", externalUrl: portalUrl }
-            ]
-        };
+            // PARSING LOGIC: Extract a direct, clean video URL from the dataset
+            // In a real open-source scraper, you would match the imdbId here
+            const directVideoUrl = "https://googleapis.com";
 
-        res.status(200).json(streamData);
-        return;
-    }
+            const streamData = {
+                streams: [
+                    { 
+                        title: "🎬 skull Native - Ad-Free Direct Stream", 
+                        // Using 'url' instead of 'externalUrl' forces Stremio to play it natively inside the app!
+                        url: directVideoUrl 
+                    }
+                ]
+            };
 
-    // 4. TV Series Streams
-    if (cleanUrl.includes("/stream/series/")) {
-        const urlParts = cleanUrl.split("/");
-        const fileName = urlParts[urlParts.length - 1];
-        const fullId = fileName.replace(".json", "");
-
-        const portalUrl = "https:" + slash + slash + domain + slash + "player.html?type=series&id=" + fullId;
-
-        const streamData = {
-            streams: [
-                { title: "🎬 Open Series in skull Lightweight Player", externalUrl: portalUrl }
-            ]
-        };
-
-        res.status(200).json(streamData);
+            res.status(200).json(streamData);
+        } catch (error) {
+            // Fallback response if the background fetch fails
+            res.status(200).json({
+                streams: [{ title: "⚠️ Server Fetch Timeout", url: "" }]
+            });
+        }
         return;
     }
 
