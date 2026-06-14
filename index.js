@@ -30,13 +30,13 @@ module.exports = (req, res) => {
         const fileName = urlParts[urlParts.length - 1];
         const imdbId = fileName.replace(".json", "");
 
-        const vidsrcUrl = "https:" + slash + slash + "vidbox.dev" + slash + "watch" + slash + "movie" + slash + "?video_id=" + imdbId;
+        const vidsrcUrl = "https:" + slash + slash + "vidbox.dev" + slash + "movie" + slash + imdbId;
         const embedUrl = "https:" + slash + slash + "multiembed.mov" + slash + "?video_id=" + imdbId;
 
         const streamData = {
             streams: [
-                { title: "🎬 Open Movie in stremio" , externalUrl: vidsrcUrl },
-                { title: "🚀 Open Movie in external Player", externalUrl: embedUrl }
+                { title: "🎬 Open Movie in skull player" , externalUrl: vidsrcUrl },
+                { title: "🚀 Open Movie in skull external Player", externalUrl: embedUrl }
             ]
         };
 
@@ -60,8 +60,8 @@ module.exports = (req, res) => {
 
         const streamData = {
             streams: [
-                { title: "🎬 Open Series in VidSrc Player", externalUrl: vidsrcSeries },
-                { title: "🚀 Open Series in SuperEmbed Player", externalUrl: embedSeries }
+                { title: "🎬 Open Series in skull Player", externalUrl: vidsrcSeries },
+                { title: "🚀 Open Series in skull other Player", externalUrl: embedSeries }
             ]
         };
 
