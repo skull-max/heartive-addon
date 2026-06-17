@@ -3,89 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skull Web Portal</title>
+    <title>Skull Ad-Isolation Player</title>
     <style>
         body {
             background-color: #050508;
             color: #ffffff;
-            font-family: 'Segoe UI', Arial, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            min-height: 100vh;
+            height: 100vh;
+            overflow: hidden;
         }
-        .portal-card {
-            background-color: #0d0e15;
-            padding: 30px;
-            border-radius: 16px;
-            box-shadow: 0px 0px 30px rgba(69, 243, 255, 0.2);
-            text-align: center;
-            width: 95%;
-            max-width: 700px;
-            border: 2px solid #45f3ff;
-        }
-        .skull-icon {
-            font-size: 45px;
-            margin-bottom: 5px;
-            text-shadow: 0 0 15px #45f3ff;
-        }
-        h2 {
-            margin-top: 0;
-            margin-bottom: 20px;
-            letter-spacing: 3px;
-        }
-        video {
-            width: 100%;
+        .app-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
             background-color: #000000;
-            border-radius: 8px;
-            border: 1px solid #333;
-            margin-bottom: 20px;
         }
-        .launcher-zone {
-            border-top: 1px solid #1f2833;
-            padding-top: 20px;
-            margin-top: 10px;
+        .top-bar {
+            background-color: #0d0e15;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #45f3ff;
         }
-        .launcher-btn {
-            display: inline-block;
-            background-color: #050508;
-            color: #45f3ff;
-            border: 2px solid #45f3ff;
-            padding: 12px 24px;
-            margin: 8px;
-            border-radius: 8px;
-            font-size: 14px;
+        .title {
+            font-size: 16px;
             font-weight: bold;
-            text-decoration: none;
-            transition: 0.3s ease;
+            color: #45f3ff;
+            letter-spacing: 2px;
         }
-        .launcher-btn:hover {
-            background-color: #45f3ff;
-            color: #050508;
-            box-shadow: 0 0 15px #45f3ff;
+        .stream-window {
+            flex-grow: 1;
+            position: relative;
+            background-color: #000;
         }
-        p { color: #8f94a5; font-size: 14px; }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
 </head>
 <body>
 
-    <div class="portal-card">
-        <div class="skull-icon">💀</div>
-        <h2>SKULL PORTAL PLAYER</h2>
+    <div class="app-container">
+        <!-- Custom Player Application Header UI -->
+        <div class="top-bar">
+            <span class="title">💀 SKULL AD-BLOCK PLAYER v1.0</span>
+            <span style="font-size: 12px; color: #8f94a5;">Stream Isolated Safely</span>
+        </div>
         
-        <!-- Native Ad-Free Video Player Object Container -->
-        <video id="skull-video-player" controls autoplay referrerpolicy="no-referrer">
-            Your mobile browser does not support this video stream format.
-        </video>
-
-        <!-- External Backup Launcher Links Panel -->
-        <div class="launcher-zone">
-            <p>Backup Servers (If native stream is loading):</p>
-            <a id="btn-server1" class="launcher-btn" href="#" target="_blank">🚀 Launch VidSrc</a>
-            <a id="btn-server2" class="launcher-btn" href="#" target="_blank">🛸 Launch SuperEmbed</a>
+        <!-- Protected Video Execution Engine -->
+        <div class="stream-window">
+            <!-- 
+              CRUCIAL CODE: The sandbox attribute below allows scripts to run the video,
+              but completely revokes their ability to open pop-up windows ('allow-popups' is deleted!)
+            -->
+            <iframe id="app-video-frame" src="" allowfullscreen referrerpolicy="no-referrer"
+                    sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
         </div>
     </div>
 
@@ -93,28 +75,19 @@
         const urlParams = new URLSearchParams(window.location.search);
         const imdbId = urlParams.get('id');
         const mediaType = urlParams.get('type') || 'movie';
-        
-        const videoPlayer = document.getElementById('skull-video-player');
-        const btn1 = document.getElementById('btn-server1');
-        const btn2 = document.getElementById('btn-server2');
-        
+        const iframe = document.getElementById('app-video-frame');
         const s = String.fromCharCode(47); 
 
         if (imdbId) {
-            // 1. Direct the Native Ad-Free Player to the clean storage source link file
-            videoPlayer.src = "https:" + s + s + "://googleapis.com" + s + "gtv-videos-bucket" + s + "sample" + s + "BigBuckBunny.mp4";
-
-            // 2. Map out the backup launcher targets safely
+            // Points to VidSrc player, but executes inside our sandbox jail block
             if (mediaType === 'movie') {
-                btn1.href = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "movie" + s + imdbId;
-                btn2.href = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + imdbId;
+                iframe.src = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "movie" + s + imdbId;
             } else {
                 const parts = imdbId.split(':');
-                const showId = parts;
-                const season = parts || '1';
-                const episode = parts || '1';
-                btn1.href = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "tv" + s + showId + s + season + s + episode;
-                btn2.href = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + showId + "&s=" + season + "&e=" + episode;
+                const showId = parts[0];
+                const season = parts[1] || '1';
+                const episode = parts[2] || '1';
+                iframe.src = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "tv" + s + showId + s + season + s + episode;
             }
         }
     </script>
