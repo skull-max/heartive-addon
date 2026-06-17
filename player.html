@@ -1,97 +1,21 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skull Secure Player</title>
-    <style>
-        body {
-            background-color: #050508;
-            color: #ffffff;
-            font-family: 'Segoe UI', sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            overflow: hidden;
-        }
-        .app-container {
-            width: 100vw;
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            background-color: #000000;
-        }
-        .top-bar {
-            background-color: #0d0e15;
-            padding: 12px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 2px solid #45f3ff;
-            box-shadow: 0 4px 15px rgba(69, 243, 255, 0.1);
-        }
-        .title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #45f3ff;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px #45f3ff;
-        }
-        .stream-window {
-            flex-grow: 1;
-            position: relative;
-            background-color: #000;
-        }
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-    </style>
-</head>
-<body>
+<!-- Replace the script section at the bottom of your player.html file -->
+<script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const imdbId = urlParams.get('id');
+    const mediaType = urlParams.get('type') || 'movie';
+    const iframe = document.getElementById('app-video-frame');
+    const s = String.fromCharCode(47); 
 
-    <div class="app-container">
-        <div class="top-bar">
-            <span class="title">💀 SKULL AD-SHIELD v3.0</span>
-            <span style="font-size: 12px; color: #45f3ff; font-weight: bold;">Popup Traffic Isolated</span>
-        </div>
-        
-        <div class="stream-window">
-            <!-- 
-               THE SECURITY BLUEPRINT: 
-               By adding 'allow-storage-access-by-user-activation' and 'allow-same-origin', 
-               we satisfy multiembed's internal script checks so it doesn't throw a block error. 
-               By leaving out 'allow-popups' and 'allow-top-navigation', Chrome strips away 
-               its ability to open tabs, launch AliExpress, or redirect your screen!
-            -->
-            <iframe id="app-video-frame" src="" allowfullscreen referrerpolicy="no-referrer"
-                    sandbox="allow-scripts allow-same-origin allow-forms allow-storage-access-by-user-activation"></iframe>
-        </div>
-    </div>
-
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const imdbId = urlParams.get('id');
-        const mediaType = urlParams.get('type') || 'movie';
-        const iframe = document.getElementById('app-video-frame');
-        const s = String.fromCharCode(47); 
-
-        if (imdbId) {
-            if (mediaType === 'movie') {
-                iframe.src = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + imdbId;
-            } else {
-                const parts = imdbId.split(':');
-                const showId = parts.shift();
-                const season = parts.shift() || '1';
-                const episode = parts.shift() || '1';
-                iframe.src = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + showId + "&s=" + season + "&e=" + episode;
-            }
+    if (imdbId) {
+        if (mediaType === 'movie') {
+            // Swapping to a cleaner public embed engine that loves open-source wrappers
+            iframe.src = "https:" + s + s + "vidsrc.xyz" + s + "embed" + s + "movie" + s + imdbId;
+        } else {
+            const parts = imdbId.split(':');
+            const showId = parts.shift();
+            const season = parts.shift() || '1';
+            const episode = parts.shift() || '1';
+            iframe.src = "https:" + s + s + "vidsrc.xyz" + s + "embed" + s + "tv" + s + showId + s + season + s + episode;
         }
-    </script>
-</body>
-</html>
+    }
+</script>
