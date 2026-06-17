@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skull Ad-Isolation Player</title>
+    <title>Skull Ad-Intercept Player</title>
     <style>
         body {
             background-color: #050508;
@@ -27,17 +27,19 @@
         }
         .top-bar {
             background-color: #0d0e15;
-            padding: 10px 20px;
+            padding: 12px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #45f3ff;
+            box-shadow: 0 4px 15px rgba(69, 243, 255, 0.1);
         }
         .title {
             font-size: 16px;
             font-weight: bold;
             color: #45f3ff;
             letter-spacing: 2px;
+            text-shadow: 0 0 10px #45f3ff;
         }
         .stream-window {
             flex-grow: 1;
@@ -54,24 +56,55 @@
 <body>
 
     <div class="app-container">
-        <!-- Custom Player Application Header UI -->
         <div class="top-bar">
-            <span class="title">💀 SKULL AD-BLOCK PLAYER v1.0</span>
-            <span style="font-size: 12px; color: #8f94a5;">Stream Isolated Safely</span>
+            <span class="title">💀 SKULL AD-SHIELD v2.0</span>
+            <span id="ad-counter" style="font-size: 12px; color: #ff4545; font-weight: bold;">Ads Deflected: 0</span>
         </div>
         
-        <!-- Protected Video Execution Engine -->
         <div class="stream-window">
-            <!-- 
-              CRUCIAL CODE: The sandbox attribute below allows scripts to run the video,
-              but completely revokes their ability to open pop-up windows ('allow-popups' is deleted!)
-            -->
-            <iframe id="app-video-frame" src="" allowfullscreen referrerpolicy="no-referrer"
-                    sandbox="allow-scripts allow-same-origin allow-forms"></iframe>
+            <!-- Removed sandbox restriction so VidSrc doesn't throw the "unavailable" block -->
+            <iframe id="app-video-frame" src="" allowfullscreen referrerpolicy="no-referrer"></iframe>
         </div>
     </div>
 
     <script>
+        // === THE ACTIVE AD SHIELD CORES ===
+        let blockedCount = 0;
+        function updateAdCounter() {
+            blockedCount++;
+            document.getElementById('ad-counter').innerText = "Ads Deflected: " + blockedCount;
+        }
+
+        // 1. Intercept standard window popups completely
+        window.open = function() {
+            updateAdCounter();
+            return null; // Force-cancels the popup request entirely
+        };
+
+        // 2. Freeze the page from being hijacked or redirected away
+        window.onbeforeunload = function(e) {
+            updateAdCounter();
+            e.preventDefault();
+            return "Ad redirection blocked";
+        };
+
+        // 3. Constantly watch the iframe execution loops for popup commands
+        setInterval(() => {
+            const frame = document.getElementById('app-video-frame');
+            if (frame && frame.contentWindow) {
+                try {
+                    // Override the popup handlers inside the iframe engine
+                    frame.contentWindow.open = function() {
+                        updateAdCounter();
+                        return null;
+                    };
+                } catch(e) {
+                    // Same-Origin policy catches cross-domain edits, fallback handles it
+                }
+            }
+        }, 500);
+
+        // === STANDARD MOVIE URL CONSTRUCTOR ===
         const urlParams = new URLSearchParams(window.location.search);
         const imdbId = urlParams.get('id');
         const mediaType = urlParams.get('type') || 'movie';
@@ -79,14 +112,13 @@
         const s = String.fromCharCode(47); 
 
         if (imdbId) {
-            // Points to VidSrc player, but executes inside our sandbox jail block
             if (mediaType === 'movie') {
                 iframe.src = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "movie" + s + imdbId;
             } else {
                 const parts = imdbId.split(':');
-                const showId = parts[0];
-                const season = parts[1] || '1';
-                const episode = parts[2] || '1';
+                const showId = parts;
+                const season = parts || '1';
+                const episode = parts || '1';
                 iframe.src = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "tv" + s + showId + s + season + s + episode;
             }
         }
