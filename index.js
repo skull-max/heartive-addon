@@ -1,12 +1,11 @@
-// Skull Multi-Route Web-Safe Portal Router
 const fs = require('fs');
 const path = require('path');
 
 const MANIFEST = {
-    id: "org.heartive.skulldirectv4", // New ID to clear Stremio's memory index caches
-    version: "11.0.0", 
-    name: "skull Multi-Player",
-    description: "Web-safe multi-routing cloud streamer portal layout",
+    id: "org.heartive.skulldirectv5", // Bumped version to push past Stremio's local app memory cache
+    version: "12.0.0", 
+    name: "skull Ad-Isolation Player",
+    description: "Launches streaming links into a sandboxed player framework",
     resources: ["stream"],
     types: ["movie", "series"],
     idPrefixes: ["tt"], 
@@ -22,13 +21,11 @@ module.exports = (req, res) => {
     const slash = String.fromCharCode(47);
     const domain = req.headers.host;
 
-    // 1. Deliver the Manifest Configuration
     if (cleanUrl === "/" || cleanUrl === "/manifest.json") {
         res.status(200).json(MANIFEST);
         return;
     }
 
-    // 2. Safely serve the player.html file 
     if (cleanUrl === "/player.html") {
         try {
             const filePath = path.join(process.cwd(), 'player.html');
@@ -41,40 +38,27 @@ module.exports = (req, res) => {
         return;
     }
 
-    // 3. Movie Streams Route
     if (cleanUrl.includes("/stream/movie/")) {
         const streamParts = cleanUrl.split("/");
         const fileName = streamParts.pop();
         const imdbId = fileName.replace(".json", "");
-
-        // Points directly to our web portal room to bypass Stremio file type blocks
         const portalUrl = "https:" + slash + slash + domain + slash + "player.html?type=movie&id=" + imdbId;
 
-        const streamData = {
-            streams: [
-                { title: "🎬 Open in skull Native Player (100% Ad-Free)", externalUrl: portalUrl }
-            ]
-        };
-
-        res.status(200).json(streamData);
+        res.status(200).json({
+            streams: [{ title: "🎬 Play in skull Ad-Isolation Player", externalUrl: portalUrl }]
+        });
         return;
     }
 
-    // 4. TV Series Streams Route
     if (cleanUrl.includes("/stream/series/")) {
         const streamParts = cleanUrl.split("/");
         const fileName = streamParts.pop();
         const fullId = fileName.replace(".json", "");
-
         const portalUrl = "https:" + slash + slash + domain + slash + "player.html?type=series&id=" + fullId;
 
-        const streamData = {
-            streams: [
-                { title: "🎬 Open Series in skull Native Player (100% Ad-Free)", externalUrl: portalUrl }
-            ]
-        };
-
-        res.status(200).json(streamData);
+        res.status(200).json({
+            streams: [{ title: "🎬 Play Series in skull Ad-Isolation Player", externalUrl: portalUrl }]
+        });
         return;
     }
 
