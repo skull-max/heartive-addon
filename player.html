@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skull Portal Engine</title>
+    <title>Skull Ad-Intercept Player</title>
     <style>
         body {
             background-color: #050508;
@@ -32,6 +32,7 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #45f3ff;
+            box-shadow: 0 4px 15px rgba(69, 243, 255, 0.1);
         }
         .title {
             font-size: 16px;
@@ -56,16 +57,52 @@
 
     <div class="app-container">
         <div class="top-bar">
-            <span class="title">💀 SKULL PORTAL PLAYER</span>
-            <span style="font-size: 12px; color: #8f94a5;">Option 2 Media Room</span>
+            <span class="title">💀 SKULL AD-SHIELD v2.5</span>
+            <span id="ad-counter" style="font-size: 12px; color: #ff4545; font-weight: bold;">Ads Deflected: 0</span>
         </div>
+        
         <div class="stream-window">
-            <!-- Loads VidSrc without sandboxing constraints to ensure the player initializes -->
             <iframe id="app-video-frame" src="" allowfullscreen referrerpolicy="no-referrer"></iframe>
         </div>
     </div>
 
     <script>
+        // === THE ACTIVE AD SHIELD CORES ===
+        let blockedCount = 0;
+        function updateAdCounter() {
+            blockedCount++;
+            document.getElementById('ad-counter').innerText = "Ads Deflected: " + blockedCount;
+        }
+
+        // Intercept standard window popups completely
+        window.open = function() {
+            updateAdCounter();
+            return null; // Force-cancels the popup request entirely
+        };
+
+        // Freeze the page from being hijacked or redirected away
+        window.onbeforeunload = function(e) {
+            updateAdCounter();
+            e.preventDefault();
+            return "Ad redirection blocked";
+        };
+
+        // Constantly watch the iframe execution loops for popup commands
+        setInterval(() => {
+            const frame = document.getElementById('app-video-frame');
+            if (frame && frame.contentWindow) {
+                try {
+                    frame.contentWindow.open = function() {
+                        updateAdCounter();
+                        return null;
+                    };
+                } catch(e) {
+                    // Cross-domain safety fallback
+                }
+            }
+        }, 500);
+
+        // === MULTIEMBED URL CONSTRUCTOR ===
         const urlParams = new URLSearchParams(window.location.search);
         const imdbId = urlParams.get('id');
         const mediaType = urlParams.get('type') || 'movie';
@@ -74,13 +111,17 @@
 
         if (imdbId) {
             if (mediaType === 'movie') {
-                iframe.src = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "movie" + s + imdbId;
+                // Hardcodes: https://multiembed.mov
+                iframe.src = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + imdbId;
             } else {
+                // For TV Series, Stremio formats fullId as tt1234567:1:1
                 const parts = imdbId.split(':');
                 const showId = parts.shift();
                 const season = parts.shift() || '1';
                 const episode = parts.shift() || '1';
-                iframe.src = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "tv" + s + showId + s + season + s + episode;
+                
+                // Hardcodes: https://multiembed.mov&s=1&e=1
+                iframe.src = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + showId + "&s=" + season + "&e=" + episode;
             }
         }
     </script>
