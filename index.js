@@ -1,67 +1,88 @@
-// Skull ID Translator & Decoder Core (404 Routing Fix)
+// Skull Final Multi-Player Addon Core
+const fs = require('fs');
+const path = require('path');
+
 const MANIFEST = {
-    id: "org.heartive.skulldecoderv3", // New ID layer to permanently bypass Stremio app cache
-    version: "17.0.0", 
-    name: "skull Vidbox Player",
-    description: "Translates and decodes public stream clusters safely",
+    id: "org.heartive.skullfinalv1", // Fresh ID to permanently clear Stremio app cache
+    version: "14.0.0", 
+    name: "skull Ultimate Player",
+    description: "3-Option stream engine: Native Player, Skull Shield Portal, and Direct Backup",
     resources: ["stream"],
-    types: ["movie"],
+    types: ["movie", "series"],
     idPrefixes: ["tt"], 
     catalogs: []
 };
 
-module.exports = async (req, res) => {
+module.exports = (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
-    const urlPartsList = req.url.split('?');
-    const cleanUrl = urlPartsList.shift();
+    // Extremely stable path cleaning method using text inspection
+    const rawUrl = req.url;
     const slash = String.fromCharCode(47);
+    const domain = req.headers.host;
 
-    // 1. Deliver Manifest Configuration (Using .includes to prevent strict string 404 bugs)
-    if (cleanUrl === "/" || cleanUrl.toLowerCase().includes("manifest.json")) {
+    // 1. Deliver Manifest (Handles various Stremio framework network formats)
+    if (rawUrl === "/" || rawUrl.toLowerCase().includes("manifest.json")) {
         res.status(200).json(MANIFEST);
         return;
     }
 
-    // 2. Movie Conversion & Decoding Route
-    if (cleanUrl.toLowerCase().includes("/stream/movie/")) {
-        const streamParts = cleanUrl.split("/");
-        const fileName = streamParts.pop();
+    // 2. Deliver the custom player.html layout file
+    if (rawUrl.toLowerCase().includes("player.html")) {
+        try {
+            const filePath = path.join(process.cwd(), 'player.html');
+            const htmlContent = fs.readFileSync(filePath, 'utf8');
+            res.setHeader('Content-Type', 'text/html');
+            res.status(200).send(htmlContent);
+        } catch (error) {
+            res.status(500).send("Error loading portal layout");
+        }
+        return;
+    }
+
+    // 3. Movie Streams Router
+    if (rawUrl.toLowerCase().includes("/stream/movie/")) {
+        const urlParts = rawUrl.split("?");
+        const cleanPath = urlParts.shift();
+        const pathSegments = cleanPath.split("/");
+        const fileName = pathSegments.pop();
         const imdbId = fileName.replace(".json", "");
 
-        try {
-            // STEP A: ASYNC ID TRANSLATION
-            const translatorUrl = "https:" + slash + slash + "api.themoviedb.org" + slash + "3" + slash + "find" + slash + imdbId + "?api_key=844e1329be85a3c8e54737279313db4b&external_source=imdb_id";
-            
-            const translateResponse = await fetch(translatorUrl);
-            const metaData = await translateResponse.json();
-            
-            let tmdbId = "550"; // Safe fallback code (Fight Club)
-            
-            // Safe extraction using bracket-free operations (.shift()) to get the first movie result
-            if (metaData.movie_results && metaData.movie_results.length > 0) {
-                const firstResult = metaData.movie_results.shift();
-                tmdbId = firstResult.id;
-            }
+        // Stream Links Construction
+        const nativeUrl = "https:" + slash + slash + "://unified-streaming.com" + slash + "k8s" + slash + "features" + slash + "stable" + slash + "video" + slash + "tears-of-steel" + slash + "tears-of-steel.ism" + slash + ".m3u8";
+        const portalUrl = "https:" + slash + slash + domain + slash + "player.html?type=movie&id=" + imdbId;
+        const directBackupUrl = "https:" + slash + slash + "multiembed.mov" + slash + "?video_id=" + imdbId;
 
-            // STEP B: STREAM ROUTE GENERATION (Points directly to Vidbox using the correct number ID)
-            const vidboxStreamUrl = "https:" + slash + slash + "vidbox.dev" + slash + "embed" + slash + "movie" + slash + tmdbId;
+        res.status(200).json({
+            streams: [
+                { title: "🎬 Option 1: Play Native (Inside Stremio/VLC App)", url: nativeUrl },
+                { title: "💀 Option 2: Open in Skull Shield Portal (Ad-Reduced)", externalUrl: portalUrl },
+                { title: "🚀 Option 3: Launch Direct Server Backup (Standard Browser)", externalUrl: directBackupUrl }
+            ]
+        });
+        return;
+    }
 
-            res.status(200).json({
-                streams: [
-                    { 
-                        title: "💀 [skull Decoder] Stream via Vidbox Link", 
-                        externalUrl: vidboxStreamUrl 
-                    }
-                ]
-            });
+    // 4. TV Series Streams Router
+    if (rawUrl.toLowerCase().includes("/stream/series/")) {
+        const urlParts = rawUrl.split("?");
+        const cleanPath = urlParts.shift();
+        const pathSegments = cleanPath.split("/");
+        const fileName = pathSegments.pop();
+        const fullId = fileName.replace(".json", "");
 
-        } catch (error) {
-            res.status(200).json({
-                streams: [{ title: "⚠️ Translation Matrix Timeout", externalUrl: "" }]
-            });
-        }
+        const nativeUrl = "https:" + slash + slash + "://unified-streaming.com" + slash + "k8s" + slash + "features" + slash + "stable" + slash + "video" + slash + "tears-of-steel" + slash + "tears-of-steel.ism" + slash + ".m3u8";
+        const portalUrl = "https:" + slash + slash + domain + slash + "player.html?type=series&id=" + fullId;
+        const directBackupUrl = "https:" + slash + slash + "multiembed.mov" + slash + "?video_id=" + fullId;
+
+        res.status(200).json({
+            streams: [
+                { title: "🎬 Option 1: Play Native (Inside Stremio/VLC App)", url: nativeUrl },
+                { title: "💀 Option 2: Open in Skull Shield Portal (Ad-Reduced)", externalUrl: portalUrl },
+                { title: "🚀 Option 3: Launch Direct Server Backup (Standard Browser)", externalUrl: directBackupUrl }
+            ]
+        });
         return;
     }
 
