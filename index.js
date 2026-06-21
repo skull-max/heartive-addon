@@ -1,12 +1,12 @@
-// Skull Final Multi-Player Addon Core
+// Skull Unified Portal Launcher Addon Core
 const fs = require('fs');
 const path = require('path');
 
 const MANIFEST = {
-    id: "org.heartive.skullfinalv1", // Fresh ID to permanently clear Stremio app cache
-    version: "14.0.0", 
+    id: "org.heartive.skullfinalv2", // New ID to permanently clear Stremio app cache
+    version: "15.0.0", 
     name: "skull Ultimate Player",
-    description: "3-Option stream engine: Native Player, Skull Shield Portal, and Direct Backup",
+    description: "3-Option stream engine: Trailer engine and dual portal rooms",
     resources: ["stream"],
     types: ["movie", "series"],
     idPrefixes: ["tt"], 
@@ -17,7 +17,6 @@ module.exports = (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Content-Type', 'application/json');
 
-    // Extremely stable path cleaning method using text inspection
     const rawUrl = req.url;
     const slash = String.fromCharCode(47);
     const domain = req.headers.host;
@@ -49,16 +48,16 @@ module.exports = (req, res) => {
         const fileName = pathSegments.pop();
         const imdbId = fileName.replace(".json", "");
 
-        // Stream Links Construction
-        const nativeUrl = "https:" + slash + slash + "://unified-streaming.com" + slash + "k8s" + slash + "features" + slash + "stable" + slash + "video" + slash + "tears-of-steel" + slash + "tears-of-steel.ism" + slash + ".m3u8";
-        const portalUrl = "https:" + slash + slash + domain + slash + "player.html?type=movie&id=" + imdbId;
-        const directBackupUrl = "https:" + slash + slash + "multiembed.mov" + slash + "?video_id=" + imdbId;
+        // Links Construction
+        const trailerUrl = "https:" + slash + slash + "www.youtube.com" + slash + "results?search_query=" + imdbId + "+official+trailer";
+        const portalUrlServer1 = "https:" + slash + slash + domain + slash + "player.html?type=movie&server=1&id=" + imdbId;
+        const portalUrlServer2 = "https:" + slash + slash + domain + slash + "player.html?type=movie&server=2&id=" + imdbId;
 
         res.status(200).json({
             streams: [
-                { title: "🎬 Option 1: Play Native (Inside Stremio/VLC App)", url: nativeUrl },
-                { title: "💀 Option 2: Open in Skull Shield Portal (Ad-Reduced)", externalUrl: portalUrl },
-                { title: "🚀 Option 3: Launch Direct Server Backup (Standard Browser)", externalUrl: directBackupUrl }
+                { title: "⏳ Option 1: In Progress (Loads Trailer Page)", externalUrl: trailerUrl },
+                { title: "💀 Option 2: Open in Skull Shield Portal (Server 1)", externalUrl: portalUrlServer1 },
+                { title: "💀 Option 3: Open in Skull Shield Portal (Server 2)", externalUrl: portalUrlServer2 }
             ]
         });
         return;
@@ -72,15 +71,15 @@ module.exports = (req, res) => {
         const fileName = pathSegments.pop();
         const fullId = fileName.replace(".json", "");
 
-        const nativeUrl = "https:" + slash + slash + "://unified-streaming.com" + slash + "k8s" + slash + "features" + slash + "stable" + slash + "video" + slash + "tears-of-steel" + slash + "tears-of-steel.ism" + slash + ".m3u8";
-        const portalUrl = "https:" + slash + slash + domain + slash + "player.html?type=series&id=" + fullId;
-        const directBackupUrl = "https:" + slash + slash + "multiembed.mov" + slash + "?video_id=" + fullId;
+        const trailerUrl = "https:" + slash + slash + "www.youtube.com" + slash + "results?search_query=" + fullId + "+official+trailer";
+        const portalUrlServer1 = "https:" + slash + slash + domain + slash + "player.html?type=series&server=1&id=" + fullId;
+        const portalUrlServer2 = "https:" + slash + slash + domain + slash + "player.html?type=series&server=2&id=" + fullId;
 
         res.status(200).json({
             streams: [
-                { title: "🎬 Option 1: Play Native (Inside Stremio/VLC App)", url: nativeUrl },
-                { title: "💀 Option 2: Open in Skull Shield Portal (Ad-Reduced)", externalUrl: portalUrl },
-                { title: "🚀 Option 3: Launch Direct Server Backup (Standard Browser)", externalUrl: directBackupUrl }
+                { title: "⏳ Option 1: In Progress (Loads Trailer Page)", externalUrl: trailerUrl },
+                { title: "💀 Option 2: Open in Skull Shield Portal (Server 1)", externalUrl: portalUrlServer1 },
+                { title: "💀 Option 3: Open in Skull Shield Portal (Server 2)", externalUrl: portalUrlServer2 }
             ]
         });
         return;
