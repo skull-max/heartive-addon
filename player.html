@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skull Portal Engine</title>
+    <title>Skull Infinite Shield Portal</title>
     <style>
         body {
             background-color: #050508;
@@ -53,7 +53,7 @@
             border: none;
             z-index: 1;
         }
-        /* Persistent Multi-Click Interceptor Layer */
+        /* Infinite Auto-Resetting Shield Layer */
         .click-shield {
             position: absolute;
             top: 0;
@@ -63,6 +63,7 @@
             z-index: 5;
             cursor: pointer;
             background: transparent;
+            display: block;
         }
         .loading-overlay {
             position: absolute;
@@ -106,7 +107,7 @@
     <div class="app-container">
         <div class="top-bar">
             <span class="title">💀 SKULL PORTAL PLAYER</span>
-            <span id="shield-status" style="font-size: 12px; color: #45f3ff; font-weight: bold;">Shield Active (3 Charges)</span>
+            <span id="shield-status" style="font-size: 12px; color: #45f3ff; font-weight: bold;">INFINITE SHIELD ACTIVE</span>
         </div>
         <div class="stream-window">
             <div id="portal-shield" class="click-shield"></div>
@@ -126,28 +127,33 @@
         const spinner = document.getElementById('spinner-layer');
         const iframe = document.getElementById('app-video-frame');
 
-        // Block all programmatic window popping attempts
+        // Block popup windows entirely
         window.open = function() { return null; };
 
-        // === PERSISTENT CLICK CHARGE COUNTER ===
-        let clickCharges = 3; // Captures and absorbs 3 back-to-back ad triggers before unlocking the film
+        // CHROME NAVIGATION SECURITY ENHANCEMENT
+        // Actively prompts Chrome to block external tab hijack attempts
+        window.onbeforeunload = function() {
+            return "Skull Shield intercepted a website redirection.";
+        };
 
+        // === INFINITE COOLDOWN SHIELD ENGINE ===
         shield.addEventListener('click', function(e) {
+            // 1. Instantly catch and destroy the incoming ad breakout thread
             e.stopPropagation();
             e.preventDefault();
             
-            clickCharges--;
+            statusText.innerText = "POPUP DEFLECTED - WINDOW OPEN";
+            statusText.style.color = "#ff4545";
 
-            if (clickCharges > 0) {
-                // Keep shield up, absorb popup, update the header text matrix
-                statusText.innerText = "Shield Absorbed Ad (" + clickCharges + " Left)";
-                statusText.style.color = "#ff4545";
-            } else {
-                // All hidden ad layers are successfully cleared out! Remove shield.
-                shield.style.display = 'none';
-                statusText.innerText = "Shield Passed - Controls Unlocked";
-                statusText.style.color = "#66fcf1";
-            }
+            // 2. Drop the shield for exactly 500 milliseconds (0.5 seconds) so your next tap hits the real button
+            shield.style.display = 'none';
+
+            // 3. Automatically turn the shield back on after 0.5 seconds to absorb the next ad wave
+            setTimeout(() => {
+                shield.style.display = 'block';
+                statusText.innerText = "INFINITE SHIELD RE-ENGAGED";
+                statusText.style.color = "#45f3ff";
+            }, 500);
         }, true);
 
         iframe.onload = function() {
