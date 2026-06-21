@@ -53,6 +53,7 @@
             border: none;
             z-index: 1;
         }
+        /* Persistent Multi-Click Interceptor Layer */
         .click-shield {
             position: absolute;
             top: 0;
@@ -63,7 +64,6 @@
             cursor: pointer;
             background: transparent;
         }
-        /* NEON LOADING SPINNER OVERLAY ELEMENT */
         .loading-overlay {
             position: absolute;
             top: 0;
@@ -106,13 +106,11 @@
     <div class="app-container">
         <div class="top-bar">
             <span class="title">💀 SKULL PORTAL PLAYER</span>
-            <span id="shield-status" style="font-size: 12px; color: #45f3ff; font-weight: bold;">Shield Engaged</span>
+            <span id="shield-status" style="font-size: 12px; color: #45f3ff; font-weight: bold;">Shield Active (3 Charges)</span>
         </div>
         <div class="stream-window">
-            <!-- First-touch click shield container -->
             <div id="portal-shield" class="click-shield"></div>
             
-            <!-- Neon Spinner Overlay -->
             <div id="spinner-layer" class="loading-overlay">
                 <div class="spinner"></div>
                 <div class="loading-text">CACHING LINK MATRIX...</div>
@@ -128,19 +126,30 @@
         const spinner = document.getElementById('spinner-layer');
         const iframe = document.getElementById('app-video-frame');
 
+        // Block all programmatic window popping attempts
         window.open = function() { return null; };
 
-        // Handle the first tap over the container to clear the invisible link layer
+        // === PERSISTENT CLICK CHARGE COUNTER ===
+        let clickCharges = 3; // Captures and absorbs 3 back-to-back ad triggers before unlocking the film
+
         shield.addEventListener('click', function(e) {
             e.stopPropagation();
             e.preventDefault();
-            shield.style.display = 'none';
-            statusText.innerText = "Shield Passed - Playing";
-            statusText.style.color = "#66fcf1";
+            
+            clickCharges--;
+
+            if (clickCharges > 0) {
+                // Keep shield up, absorb popup, update the header text matrix
+                statusText.innerText = "Shield Absorbed Ad (" + clickCharges + " Left)";
+                statusText.style.color = "#ff4545";
+            } else {
+                // All hidden ad layers are successfully cleared out! Remove shield.
+                shield.style.display = 'none';
+                statusText.innerText = "Shield Passed - Controls Unlocked";
+                statusText.style.color = "#66fcf1";
+            }
         }, true);
 
-        // AUTOMATIC LOADING SPINNER DISMISSAL
-        // Deletes the loading screen overlay the second the iframe finishes caching data
         iframe.onload = function() {
             spinner.style.opacity = '0';
             setTimeout(() => {
@@ -148,7 +157,6 @@
             }, 500);
         };
 
-        // URL Parameters Extraction Routing
         const urlParams = new URLSearchParams(window.location.search);
         const imdbId = urlParams.get('id');
         const mediaType = urlParams.get('type') || 'movie';
@@ -157,7 +165,6 @@
 
         if (imdbId) {
             if (mediaType === 'movie') {
-                // Dynamically sets source link depending on button pressed inside Stremio
                 if (targetServer === '1') {
                     iframe.src = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "movie" + s + imdbId;
                 } else {
