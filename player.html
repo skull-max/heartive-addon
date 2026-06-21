@@ -24,6 +24,7 @@
             display: flex;
             flex-direction: column;
             background-color: #000000;
+            position: relative;
         }
         .top-bar {
             background-color: #0d0e15;
@@ -32,6 +33,7 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 2px solid #45f3ff;
+            z-index: 10;
         }
         .title {
             font-size: 16px;
@@ -51,16 +53,51 @@
             border: none;
             z-index: 1;
         }
-        /* Hidden layout block over the screen to intercept first-touch ad triggers */
         .click-shield {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 2;
+            z-index: 5;
             cursor: pointer;
             background: transparent;
+        }
+        /* NEON LOADING SPINNER OVERLAY ELEMENT */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #050508;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 4;
+            transition: opacity 0.5s ease;
+        }
+        .spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #13141f;
+            border-top: 5px solid #45f3ff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            box-shadow: 0 0 15px rgba(69, 243, 255, 0.3);
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loading-text {
+            margin-top: 15px;
+            color: #45f3ff;
+            font-size: 14px;
+            letter-spacing: 2px;
+            font-weight: bold;
+            text-shadow: 0 0 5px #45f3ff;
         }
     </style>
 </head>
@@ -72,47 +109,71 @@
             <span id="shield-status" style="font-size: 12px; color: #45f3ff; font-weight: bold;">Shield Engaged</span>
         </div>
         <div class="stream-window">
-            <!-- First-touch click shield block -->
+            <!-- First-touch click shield container -->
             <div id="portal-shield" class="click-shield"></div>
+            
+            <!-- Neon Spinner Overlay -->
+            <div id="spinner-layer" class="loading-overlay">
+                <div class="spinner"></div>
+                <div class="loading-text">CACHING LINK MATRIX...</div>
+            </div>
+
             <iframe id="app-video-frame" src="" allowfullscreen referrerpolicy="no-referrer"></iframe>
         </div>
     </div>
 
     <script>
-        // === CLICK INTERCEPTION SHIELD LOGIC ===
         const shield = document.getElementById('portal-shield');
         const statusText = document.getElementById('shield-status');
+        const spinner = document.getElementById('spinner-layer');
+        const iframe = document.getElementById('app-video-frame');
 
-        // Prevent standard popups from initializing
         window.open = function() { return null; };
 
-        // Handle the first tap over the media container safely
+        // Handle the first tap over the container to clear the invisible link layer
         shield.addEventListener('click', function(e) {
             e.stopPropagation();
             e.preventDefault();
-            
-            // Remove the shield container instantly so the player control taps go through
             shield.style.display = 'none';
             statusText.innerText = "Shield Passed - Playing";
             statusText.style.color = "#66fcf1";
         }, true);
 
-        // Standard link construction parser
+        // AUTOMATIC LOADING SPINNER DISMISSAL
+        // Deletes the loading screen overlay the second the iframe finishes caching data
+        iframe.onload = function() {
+            spinner.style.opacity = '0';
+            setTimeout(() => {
+                spinner.style.display = 'none';
+            }, 500);
+        };
+
+        // URL Parameters Extraction Routing
         const urlParams = new URLSearchParams(window.location.search);
         const imdbId = urlParams.get('id');
         const mediaType = urlParams.get('type') || 'movie';
-        const iframe = document.getElementById('app-video-frame');
+        const targetServer = urlParams.get('server') || '1';
         const s = String.fromCharCode(47); 
 
         if (imdbId) {
             if (mediaType === 'movie') {
-                iframe.src = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "movie" + s + imdbId;
+                // Dynamically sets source link depending on button pressed inside Stremio
+                if (targetServer === '1') {
+                    iframe.src = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "movie" + s + imdbId;
+                } else {
+                    iframe.src = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + imdbId;
+                }
             } else {
                 const parts = imdbId.split(':');
                 const showId = parts.shift();
                 const season = parts.shift() || '1';
                 const episode = parts.shift() || '1';
-                iframe.src = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "tv" + s + showId + s + season + s + episode;
+                
+                if (targetServer === '1') {
+                    iframe.src = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "tv" + s + showId + s + season + s + episode;
+                } else {
+                    iframe.src = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + showId + "&s=" + season + "&e=" + episode;
+                }
             }
         }
     </script>
