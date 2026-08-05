@@ -4,9 +4,9 @@ const path = require('path');
 
 const MANIFEST = {
     id: "org.heartive.skullfinalv3", // New ID to permanently flush Stremio app cache
-    version: "16.0.0", 
+    version: "16.1.0", 
     name: "skull Ultimate Player",
-    description: "3-Option stream engine: Native trailer playback and dual shield portals",
+    description: "3-Option stream engine: Native trailer playback and upgraded fast-loading shield portals",
     resources: ["stream"],
     types: ["movie", "series"],
     idPrefixes: ["tt"], 
@@ -40,7 +40,7 @@ module.exports = (req, res) => {
         return;
     }
 
-    // 3. Movie Streams Router
+    // 3. Movie Streams Router (Upgraded smooth embed URLs)
     if (rawUrl.toLowerCase().includes("/stream/movie/")) {
         const urlParts = rawUrl.split("?");
         const cleanPath = urlParts.shift();
@@ -49,39 +49,47 @@ module.exports = (req, res) => {
         const imdbId = fileName.replace(".json", "");
 
         // Native trailer video stream (.m3u8) that plays perfectly inside Stremio
-        const nativeTrailerUrl = "https:" + slash + slash + "://unified-streaming.com" + slash + "k8s" + slash + "features" + slash + "stable" + slash + "video" + slash + "tears-of-steel" + slash + "tears-of-steel.ism" + slash + ".m3u8";
+        const nativeTrailerUrl = "https:" + slash + slash + "unified-streaming.com" + slash + "k8s" + slash + "features" + slash + "stable" + slash + "video" + slash + "tears-of-steel" + slash + "tears-of-steel.ism" + slash + ".m3u8";
         
+        // Server 1 & 2 pass variables directly to player.html for processing
         const portalUrlServer1 = "https:" + slash + slash + domain + slash + "player.html?type=movie&server=1&id=" + imdbId;
         const portalUrlServer2 = "https:" + slash + slash + domain + slash + "player.html?type=movie&server=2&id=" + imdbId;
 
         res.status(200).json({
             streams: [
                 { title: "⏳ Option 1: In Progress (Plays Trailer Inside Stremio)", url: nativeTrailerUrl },
-                { title: "💀 Option 2: Open in Skull Shield Portal (Server 1)", externalUrl: portalUrlServer1 },
-                { title: "💀 Option 3: Open in Skull Shield Portal (Server 2)", externalUrl: portalUrlServer2 }
+                { title: "💀 Option 2: Open in Skull Shield Portal (VidLink High Speed)", externalUrl: portalUrlServer1 },
+                { title: "💀 Option 3: Open in Skull Shield Portal (VidCore Premium Engine)", externalUrl: portalUrlServer2 }
             ]
         });
         return;
     }
 
-    // 4. TV Series Streams Router
+    // 4. TV Series Streams Router (Fixed ID Parsing for Season & Episode)
     if (rawUrl.toLowerCase().includes("/stream/series/")) {
         const urlParts = rawUrl.split("?");
         const cleanPath = urlParts.shift();
         const pathSegments = cleanPath.split("/");
         const fileName = pathSegments.pop();
-        const fullId = fileName.replace(".json", "");
+        const fullId = fileName.replace(".json", ""); // Example format: "tt1234567:1:5" (ID:Season:Episode)
 
-        const nativeTrailerUrl = "https:" + slash + slash + "://unified-streaming.com" + slash + "k8s" + slash + "features" + slash + "stable" + slash + "video" + slash + "tears-of-steel" + slash + "tears-of-steel.ism" + slash + ".m3u8";
+        // Split Stremio's default series syntax: "tt_id:season:episode"
+        const idParts = fullId.split(":");
+        const imdbId = idParts[0];
+        const season = idParts[1] || "1";
+        const episode = idParts[2] || "1";
+
+        const nativeTrailerUrl = "https:" + slash + slash + "unified-streaming.com" + slash + "k8s" + slash + "features" + slash + "stable" + slash + "video" + slash + "tears-of-steel" + slash + "tears-of-steel.ism" + slash + ".m3u8";
         
-        const portalUrlServer1 = "https:" + slash + slash + domain + slash + "player.html?type=series&server=1&id=" + fullId;
-        const portalUrlServer2 = "https:" + slash + slash + domain + slash + "player.html?type=series&server=2&id=" + fullId;
+        // Pass complete structural parameters down to the backend player page
+        const portalUrlServer1 = "https:" + slash + slash + domain + slash + "player.html?type=series&server=1&id=" + imdbId + "&s=" + season + "&e=" + episode;
+        const portalUrlServer2 = "https:" + slash + slash + domain + slash + "player.html?type=series&server=2&id=" + imdbId + "&s=" + season + "&e=" + episode;
 
         res.status(200).json({
             streams: [
                 { title: "⏳ Option 1: In Progress (Plays Trailer Inside Stremio)", url: nativeTrailerUrl },
-                { title: "💀 Option 2: Open in Skull Shield Portal (Server 1)", externalUrl: portalUrlServer1 },
-                { title: "💀 Option 3: Open in Skull Shield Portal (Server 2)", externalUrl: portalUrlServer2 }
+                { title: "💀 Option 2: Open in Skull Shield Portal (VidLink High Speed)", externalUrl: portalUrlServer1 },
+                { title: "💀 Option 3: Open in Skull Shield Portal (VidCore Premium Engine)", externalUrl: portalUrlServer2 }
             ]
         });
         return;
