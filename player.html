@@ -34,7 +34,7 @@
             align-items: center;
             border-bottom: 2px solid #45f3ff;
             z-index: 10;
-            transition: all 0.5s ease; /* Smooth transition when disappearing */
+            transition: all 0.5s ease;
         }
         .title {
             font-size: 16px;
@@ -101,26 +101,25 @@
             text-shadow: 0 0 5px #45f3ff;
         }
 
-        /* 💀 New Dull Skull Watermark Logo */
+        /* 💀 Dull Skull Watermark Style */
         .skull-watermark {
             position: absolute;
             bottom: 15px;
             left: 15px;
             font-size: 24px;
-            color: rgba(255, 255, 255, 0.15); /* Very faint and dull */
+            color: rgba(255, 255, 255, 0.15); /* Faint visual anchor */
             font-weight: bold;
             z-index: 8;
-            pointer-events: none; /* Prevents blocking clicks to video player elements */
+            pointer-events: none; /* Allows natural clicks to pass through to the media content */
             user-select: none;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
-            display: none; /* Hidden until shield is unlocked */
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+            display: none; /* Invisible until shield triggers closure */
         }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <!-- Added id="top-bar" to easily collapse it in javascript -->
         <div id="top-bar" class="top-bar">
             <span class="title">💀 SKULL PORTAL PLAYER</span>
             <span id="shield-status" style="font-size: 12px; color: #45f3ff; font-weight: bold;">Shield Core Loading...</span>
@@ -133,7 +132,7 @@
                 <div class="loading-text">CACHING LINK MATRIX...</div>
             </div>
 
-            <!-- Faint skull indicator in the lower-left corner -->
+            <!-- Faint skull indicator -->
             <div id="skull-logo" class="skull-watermark">💀</div>
 
             <iframe id="app-video-frame" src="" allowfullscreen referrerpolicy="no-referrer"></iframe>
@@ -148,8 +147,25 @@
         const topBar = document.getElementById('top-bar');
         const skullLogo = document.getElementById('skull-logo');
 
+        // 🛡️ LEVEL 1 INTERCEPTION: Local runtime neutralisation
         window.open = function() { return null; };
+        document.open = function() { return null; };
         window.onbeforeunload = function() { return "Shield active."; };
+
+        // 🛡️ LEVEL 2 INTERCEPTION: Interval Loop Context Protection
+        // Overrides iframe parameters continuously without sandbox crash loops
+        setInterval(() => {
+            try {
+                if (iframe && iframe.contentWindow) {
+                    iframe.contentWindow.open = function() { return null; };
+                    if (iframe.contentWindow.top !== window) {
+                        iframe.contentWindow.top = window;
+                    }
+                }
+            } catch(e) {
+                // Cross-Origin boundaries catch quietly
+            }
+        }, 200);
 
         // URL Parameters Extraction Routing
         const urlParams = new URLSearchParams(window.location.search);
@@ -158,17 +174,16 @@
         const targetServer = urlParams.get('server') || '1';
         const s = String.fromCharCode(47); 
 
-        // Set the initialization layout state of your shields based on targetServer
         if (targetServer === '1') {
             statusText.innerText = "SINGLE ABSORB SHIELD ENGAGED";
         } else {
             statusText.innerText = "INFINITE TIME SHIELD ACTIVE";
         }
 
-        // Helper function to hide the top bar and bring up the dull logo watermark
+        // Handles collapsing UI layers and bringing up corner watermark
         function collapseInterface() {
-            topBar.style.display = 'none'; // Instantly removes top bar space
-            skullLogo.style.display = 'block'; // Shows the faint skull watermark in the corner
+            topBar.style.display = 'none'; 
+            skullLogo.style.display = 'block'; 
         }
 
         // === DUAL INTERCEPTOR SHIELD ROUTER ===
@@ -177,21 +192,17 @@
             e.preventDefault();
 
             if (targetServer === '1') {
-                // SERVER 1 (Option 2): Single Absorb Layer. Disappears after 1 tap.
                 shield.style.display = 'none';
-                collapseInterface(); // Hides interface layout
+                collapseInterface(); 
             } else {
-                // SERVER 2 (Option 3): Infinite Time Cooldown Shield. Drops for 0.5s, then locks back!
                 statusText.innerText = "POPUP DEFLECTED";
                 statusText.style.color = "#ff4545";
                 
                 shield.style.display = 'none';
-                collapseInterface(); // Hides interface layouts upon the first blocking click
+                collapseInterface(); 
                 
                 setTimeout(() => {
                     shield.style.display = 'block';
-                    // Optional: If you want top bar to stay hidden permanently, leave this commented out.
-                    // topBar.style.display = 'flex'; 
                     statusText.innerText = "INFINITE TIME SHIELD RE-ENGAGED";
                     statusText.style.color = "#45f3ff";
                 }, 500);
@@ -203,7 +214,7 @@
             setTimeout(() => { spinner.style.display = 'none'; }, 500);
         };
 
-        // Restored your precise original multiembed and parsing string setups
+        // Stream Routing Configuration Matching Original Strings
         if (imdbId) {
             if (mediaType === 'movie') {
                 if (targetServer === '1') {
