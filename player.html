@@ -100,20 +100,18 @@
             font-weight: bold;
             text-shadow: 0 0 5px #45f3ff;
         }
-
-        /* 💀 Dull Skull Watermark Style */
         .skull-watermark {
             position: absolute;
             bottom: 15px;
             left: 15px;
             font-size: 24px;
-            color: rgba(255, 255, 255, 0.15); /* Faint visual anchor */
+            color: rgba(255, 255, 255, 0.15); 
             font-weight: bold;
             z-index: 8;
-            pointer-events: none; /* Allows natural clicks to pass through to the media content */
+            pointer-events: none; 
             user-select: none;
             text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
-            display: none; /* Invisible until shield triggers closure */
+            display: none; 
         }
     </style>
 </head>
@@ -121,18 +119,17 @@
 
     <div class="app-container">
         <div id="top-bar" class="top-bar">
-            <span class="title">💀 SKULL PORTAL PLAYER</span>
-            <span id="shield-status" style="font-size: 12px; color: #45f3ff; font-weight: bold;">Shield Core Loading...</span>
+            <span class="title">💀 SKULL EXPERIMENTAL LAYER</span>
+            <span id="shield-status" style="font-size: 12px; color: #45f3ff; font-weight: bold;">Initialising Matrix...</span>
         </div>
         <div class="stream-window">
             <div id="portal-shield" class="click-shield"></div>
             
             <div id="spinner-layer" class="loading-overlay">
                 <div class="spinner"></div>
-                <div class="loading-text">CACHING LINK MATRIX...</div>
+                <div class="loading-text">CACHING INTERCEPTOR CHANNELS...</div>
             </div>
 
-            <!-- Faint skull indicator -->
             <div id="skull-logo" class="skull-watermark">💀</div>
 
             <iframe id="app-video-frame" src="" allowfullscreen referrerpolicy="no-referrer"></iframe>
@@ -147,13 +144,11 @@
         const topBar = document.getElementById('top-bar');
         const skullLogo = document.getElementById('skull-logo');
 
-        // 🛡️ LEVEL 1 INTERCEPTION: Local runtime neutralisation
+        // 🛡️ Continuous Internal Window Guard Override
         window.open = function() { return null; };
         document.open = function() { return null; };
         window.onbeforeunload = function() { return "Shield active."; };
 
-        // 🛡️ LEVEL 2 INTERCEPTION: Interval Loop Context Protection
-        // Overrides iframe parameters continuously without sandbox crash loops
         setInterval(() => {
             try {
                 if (iframe && iframe.contentWindow) {
@@ -163,39 +158,42 @@
                     }
                 }
             } catch(e) {
-                // Cross-Origin boundaries catch quietly
+                // Cross-Origin boundary handler
             }
         }, 200);
 
-        // URL Parameters Extraction Routing
         const urlParams = new URLSearchParams(window.location.search);
         const imdbId = urlParams.get('id');
         const mediaType = urlParams.get('type') || 'movie';
         const targetServer = urlParams.get('server') || '1';
         const s = String.fromCharCode(47); 
 
+        // Update top bar notification depending on selection
         if (targetServer === '1') {
-            statusText.innerText = "SINGLE ABSORB SHIELD ENGAGED";
+            statusText.innerText = "PORTAL 1: VIDLINK ACTIVE";
+        } else if (targetServer === '2') {
+            statusText.innerText = "PORTAL 2: ORIGINAL VIDSRC ACTIVE";
         } else {
-            statusText.innerText = "INFINITE TIME SHIELD ACTIVE";
+            statusText.innerText = "PORTAL 3: MULTIEMBED ACTIVE";
         }
 
-        // Handles collapsing UI layers and bringing up corner watermark
         function collapseInterface() {
             topBar.style.display = 'none'; 
             skullLogo.style.display = 'block'; 
         }
 
-        // === DUAL INTERCEPTOR SHIELD ROUTER ===
+        // Click Interception Routers
         shield.addEventListener('click', function(e) {
             e.stopPropagation();
             e.preventDefault();
 
-            if (targetServer === '1') {
+            if (targetServer === '1' || targetServer === '2') {
+                // Portals 1 & 2 drop completely on initial engagement tap
                 shield.style.display = 'none';
                 collapseInterface(); 
             } else {
-                statusText.innerText = "POPUP DEFLECTED";
+                // Portal 3 applies an infinite cooldown loop for highly volatile providers
+                statusText.innerText = "POPUP REDIRECT DEFLECTED";
                 statusText.style.color = "#ff4545";
                 
                 shield.style.display = 'none';
@@ -214,11 +212,12 @@
             setTimeout(() => { spinner.style.display = 'none'; }, 500);
         };
 
-        // Stream Routing Configuration Matching Original Strings
         if (imdbId) {
             if (mediaType === 'movie') {
                 if (targetServer === '1') {
                     iframe.src = "https:" + s + s + "vidlink.pro" + s + "embed" + s + "movie" + s + imdbId;
+                } else if (targetServer === '2') {
+                    iframe.src = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "movie" + s + imdbId;
                 } else {
                     iframe.src = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + imdbId;
                 }
@@ -230,6 +229,8 @@
                 
                 if (targetServer === '1') {
                     iframe.src = "https:" + s + s + "vidlink.pro" + s + "embed" + s + "tv" + s + showId + s + season + s + episode;
+                } else if (targetServer === '2') {
+                    iframe.src = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "tv" + s + showId + s + season + s + episode;
                 } else {
                     iframe.src = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + showId + "&s=" + season + "&e=" + episode;
                 }
