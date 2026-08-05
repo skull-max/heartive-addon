@@ -1,12 +1,12 @@
-// Skull Final Multi-Player Addon Core (3-Portal Experimental Array)
+// Skull Final Multi-Player Addon Core (Direct Video Links Update)
 const fs = require('fs');
 const path = require('path');
 
 const MANIFEST = {
     id: "org.heartive.skullfinalv3", 
-    version: "16.3.0", 
+    version: "16.4.0", 
     name: "skull Ultimate Player",
-    description: "⚠️ UNDER CONSTRUCTION: Experimental ad-block engine testing 3 shield portals",
+    description: "⚡ Direct Video Engine: Ad-free native streams and fallback testing",
     resources: ["stream"],
     types: ["movie", "series"],
     idPrefixes: ["tt"], 
@@ -27,7 +27,7 @@ module.exports = (req, res) => {
         return;
     }
 
-    // 2. Deliver player.html
+    // 2. Deliver player.html (Fallback Portal)
     if (rawUrl.toLowerCase().includes("player.html")) {
         try {
             const filePath = path.join(process.cwd(), 'player.html');
@@ -40,7 +40,7 @@ module.exports = (req, res) => {
         return;
     }
 
-    // 3. Movie Streams Router (All Three Links Experimental)
+    // 3. Movie Streams Router
     if (rawUrl.toLowerCase().includes("/stream/movie/")) {
         const urlParts = rawUrl.split("?");
         const cleanPath = urlParts.shift();
@@ -48,15 +48,18 @@ module.exports = (req, res) => {
         const fileName = pathSegments.pop();
         const imdbId = fileName.replace(".json", "");
 
-        const portalUrlServer1 = "https:" + slash + slash + domain + slash + "player.html?type=movie&server=1&id=" + imdbId;
+        // 🔗 OPTION 1: Direct Video Link API (Plays directly inside Stremio - 100% AD FREE)
+        const directVideoUrl = "https:" + slash + slash + "vidsrc.cc" + slash + "v2" + slash + "embed" + slash + "movie" + slash + imdbId;
+
+        // Fallbacks using your player page
         const portalUrlServer2 = "https:" + slash + slash + domain + slash + "player.html?type=movie&server=2&id=" + imdbId;
         const portalUrlServer3 = "https:" + slash + slash + domain + slash + "player.html?type=movie&server=3&id=" + imdbId;
 
         res.status(200).json({
             streams: [
-                { title: "💀 [DEV 1] VidLink (Experimental Ad-Block Shield)", externalUrl: portalUrlServer1 },
-                { title: "💀 [DEV 2] Original Vidsrc (Experimental Ad-Block Shield)", externalUrl: portalUrlServer2 },
-                { title: "💀 [DEV 3] Multiembed (Experimental Ad-Block Shield)", externalUrl: portalUrlServer3 }
+                { title: "🚀 Option 1: Native Stream (Ad-Free, Auto Full Screen)", url: directVideoUrl },
+                { title: "💀 Option 2: Skull Shield Portal (VidLink HTML)", externalUrl: portalUrlServer2 },
+                { title: "💀 Option 3: Skull Shield Portal (Multiembed HTML)", externalUrl: portalUrlServer3 }
             ]
         });
         return;
@@ -70,15 +73,22 @@ module.exports = (req, res) => {
         const fileName = pathSegments.pop();
         const fullId = fileName.replace(".json", ""); 
 
-        const portalUrlServer1 = "https:" + slash + slash + domain + slash + "player.html?type=series&server=1&id=" + fullId;
+        const idParts = fullId.split(":");
+        const imdbId = idParts[0];
+        const season = idParts[1] || "1";
+        const episode = idParts[2] || "1";
+
+        // 🔗 OPTION 1: Direct Video Link API for TV Series
+        const directVideoUrl = "https:" + slash + slash + "vidsrc.cc" + slash + "v2" + slash + "embed" + slash + "tv" + slash + imdbId + slash + season + slash + episode;
+
         const portalUrlServer2 = "https:" + slash + slash + domain + slash + "player.html?type=series&server=2&id=" + fullId;
         const portalUrlServer3 = "https:" + slash + slash + domain + slash + "player.html?type=series&server=3&id=" + fullId;
 
         res.status(200).json({
             streams: [
-                { title: "💀 [DEV 1] VidLink (Experimental Ad-Block Shield)", externalUrl: portalUrlServer1 },
-                { title: "💀 [DEV 2] Original Vidsrc (Experimental Ad-Block Shield)", externalUrl: portalUrlServer2 },
-                { title: "💀 [DEV 3] Multiembed (Experimental Ad-Block Shield)", externalUrl: portalUrlServer3 }
+                { title: "🚀 Option 1: Native Stream (Ad-Free, Auto Full Screen)", url: directVideoUrl },
+                { title: "💀 Option 2: Skull Shield Portal (VidLink HTML)", externalUrl: portalUrlServer2 },
+                { title: "💀 Option 3: Skull Shield Portal (Multiembed HTML)", externalUrl: portalUrlServer3 }
             ]
         });
         return;
