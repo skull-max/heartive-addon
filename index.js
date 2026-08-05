@@ -1,10 +1,10 @@
-// Skull Final Multi-Player Addon Core (MovieIGuess Matrix Update)
+// Skull Final Multi-Player Addon Core (Server Reordered Matrix)
 const fs = require('fs');
 const path = require('path');
 
 const MANIFEST = {
     id: "org.heartive.skullfinalv3", 
-    version: "16.6.0", 
+    version: "18.1.0", // Bumped version to push clean TV cache structure
     name: "skull Multi-Server Engine",
     description: "🛠️ Experimental multi-choice testing dashboard mirroring MovieIGuess upstream panels.",
     resources: ["stream"],
@@ -38,7 +38,7 @@ module.exports = (req, res) => {
         return;
     }
 
-    // 🎬 Movie Routing Matrix
+    // 🎬 Movie Routing Matrix (Reordered)
     if (rawUrl.toLowerCase().includes("/stream/movie/")) {
         const urlParts = rawUrl.split("?");
         const cleanPath = urlParts.shift();
@@ -50,24 +50,24 @@ module.exports = (req, res) => {
 
         res.status(200).json({
             streams: [
-                { title: "🛠️ [SERVER 1] Experimental Node ", externalUrl: link(1) },
-                { title: "🛠️ [SERVER 2] Experimental Node ", externalUrl: link(2) },
+                { title: "🛠️ [SERVER 1] Experimental Node ", externalUrl: link(2) },
+                { title: "🛠️ [SERVER 2] Experimental Node ", externalUrl: link(4) },
                 { title: "🛠️ [SERVER 3] Experimental Node ", externalUrl: link(3) },
-                { title: "🛠️ [SERVER 4] Experimental Node ", externalUrl: link(4) },
-                { title: "🛠️ [SERVER 5] Experimental Node ", externalUrl: link(5) },
-                { title: "🛠️ [SERVER 6] Experimental Node ", externalUrl: link(6) },
-                { title: "🛠️ [SERVER 7] Experimental Node ", externalUrl: link(7) },
-                { title: "🛠️ [SERVER 8] Experimental Node ", externalUrl: link(8) },
-                { title: "🛠️ [SERVER 9] Experimental Node ", externalUrl: link(9) },
-                { title: "🛠️ [SERVER 10] Experimental Node ", externalUrl: link(10) },
-                { title: "🛠️ [SERVER 11] Experimental Node ", externalUrl: link(11) },
-                { title: "🛠️ [SERVER 12] Experimental Node ", externalUrl: link(12) }
+                { title: "🛠️ [SERVER 4] Experimental Node ", externalUrl: link(5) }, // Shifted indices tracking matching endpoints
+                { title: "🛠️ [SERVER 5] Experimental Node ", externalUrl: link(6) },
+                { title: "🛠️ [SERVER 6] Experimental Node ", externalUrl: link(7) },
+                { title: "🛠️ [SERVER 7] Experimental Node ", externalUrl: link(8) },
+                { title: "🛠️ [SERVER 8] Experimental Node ", externalUrl: link(9) },
+                { title: "🛠️ [SERVER 9] Experimental Node ", externalUrl: link(10) },
+                { title: "🛠️ [SERVER 10] Experimental Node ", externalUrl: link(11) },
+                { title: "🛠️ [SERVER 11] Experimental Node ", externalUrl: link(12) },
+                { title: "🛠️ [SERVER 12] Experimental Node (Original Server 1 Link)", externalUrl: link(1) }
             ]
         });
         return;
     }
 
-    // 📺 TV Series Routing Matrix
+    // 📺 TV Series Routing Matrix (Reordered)
     if (rawUrl.toLowerCase().includes("/stream/series/")) {
         const urlParts = rawUrl.split("?");
         const cleanPath = urlParts.shift();
@@ -79,18 +79,18 @@ module.exports = (req, res) => {
 
         res.status(200).json({
             streams: [
-                { title: "🛠️ [SERVER 1] Experimental Node ", externalUrl: link(1) },
-                { title: "🛠️ [SERVER 2] Experimental Node ", externalUrl: link(2) },
+                { title: "🛠️ [SERVER 1] Experimental Node ", externalUrl: link(2) },
+                { title: "🛠️ [SERVER 2] Experimental Node ", externalUrl: link(4) },
                 { title: "🛠️ [SERVER 3] Experimental Node ", externalUrl: link(3) },
-                { title: "🛠️ [SERVER 4] Experimental Node ", externalUrl: link(4) },
-                { title: "🛠️ [SERVER 5] Experimental Node ", externalUrl: link(5) },
-                { title: "🛠️ [SERVER 6] Experimental Node ", externalUrl: link(6) },
-                { title: "🛠️ [SERVER 7] Experimental Node ", externalUrl: link(7) },
-                { title: "🛠️ [SERVER 8] Experimental Node ", externalUrl: link(8) },
-                { title: "🛠️ [SERVER 9] Experimental Node ", externalUrl: link(9) },
-                { title: "🛠️ [SERVER 10] Experimental Node ", externalUrl: link(10) },
-                { title: "🛠️ [SERVER 11] Experimental Node ", externalUrl: link(11) },
-                { title: "🛠️ [SERVER 12] Experimental Node ", externalUrl: link(12) }
+                { title: "🛠️ [SERVER 4] Experimental Node ", externalUrl: link(5) },
+                { title: "🛠️ [SERVER 5] Experimental Node ", externalUrl: link(6) },
+                { title: "🛠️ [SERVER 6] Experimental Node ", externalUrl: link(7) },
+                { title: "🛠️ [SERVER 7] Experimental Node ", externalUrl: link(8) },
+                { title: "🛠️ [SERVER 8] Experimental Node ", externalUrl: link(9) },
+                { title: "🛠️ [SERVER 9] Experimental Node ", externalUrl: link(10) },
+                { title: "🛠️ [SERVER 10] Experimental Node ", externalUrl: link(11) },
+                { title: "🛠️ [SERVER 11] Experimental Node ", externalUrl: link(12) },
+                { title: "🛠️ [SERVER 12] Experimental Node (Original Server 1 Link)", externalUrl: link(1) }
             ]
         });
         return;
