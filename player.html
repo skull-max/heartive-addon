@@ -3,98 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Skull Portal Engine</title>
+    <title>Portal Engine</title>
     <style>
-        body { background-color: #050508; color: #ffffff; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; }
-        .app-container { width: 100vw; height: 100vh; display: flex; flex-direction: column; background-color: #000000; position: relative; }
-        .top-bar { background-color: #0d0e15; padding: 12px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #45f3ff; z-index: 10; }
-        .title { font-size: 16px; font-weight: bold; color: #45f3ff; letter-spacing: 2px; text-shadow: 0 0 10px #45f3ff; }
-        .stream-window { flex-grow: 1; position: relative; background-color: #000; }
-        iframe { width: 100%; height: 100%; border: none; z-index: 1; }
-        .click-shield { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; cursor: pointer; background: transparent; display: block; }
-        .loading-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-color: #050508; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 4; }
-        .spinner { width: 50px; height: 50px; border: 5px solid #13141f; border-top: 5px solid #45f3ff; border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .loading-text { margin-top: 15px; color: #45f3ff; font-size: 14px; letter-spacing: 2px; font-weight: bold; }
-        .skull-watermark { position: absolute; bottom: 15px; left: 15px; font-size: 24px; color: rgba(255, 255, 255, 0.15); font-weight: bold; z-index: 8; pointer-events: none; user-select: none; display: none; }
+        body {
+            background-color: #000000;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .viewport-wrapper {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            background-color: #000000;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            z-index: 1;
+        }
+        /* Invisible Transparent Shield covering entire video viewport */
+        .invisible-interceptor {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 5;
+            cursor: pointer;
+            background: transparent;
+            display: block;
+        }
+        /* 💀 Permanent Dull Floating Skull Stamp Logo */
+        .skull-watermark-stamp {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            font-size: 28px;
+            color: rgba(255, 255, 255, 0.12); /* Extremely faint and dull */
+            font-weight: bold;
+            z-index: 10;
+            pointer-events: none; /* Allows natural player control taps to pass directly under icon */
+            user-select: none;
+            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+        }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
-        <div id="top-bar" class="top-bar">
-            <span class="title">💀 SKULL FALLBACK LAYER</span>
-            <span id="shield-status" style="font-size: 12px; color: #45f3ff; font-weight: bold;">Loading Server Portal...</span>
-        </div>
-        <div class="stream-window">
-            <div id="portal-shield" class="click-shield"></div>
-            
-            <div id="spinner-layer" class="loading-overlay">
-                <div class="spinner"></div>
-                <div class="loading-text">PREPARING STREAM WINDOW...</div>
-            </div>
+    <div class="viewport-wrapper">
+        <!-- Tap blocker layer -->
+        <div id="click-blocker" class="invisible-interceptor"></div>
+        
+        <!-- Permanent logo -->
+        <div class="skull-watermark-stamp">💀</div>
 
-            <div id="skull-logo" class="skull-watermark">💀</div>
-
-            <!-- added explicit full screen allowance tags for android browsers -->
-            <iframe id="app-video-frame" src="" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" referrerpolicy="no-referrer"></iframe>
-        </div>
+        <iframe id="media-frame" src="" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" referrerpolicy="no-referrer"></iframe>
     </div>
 
     <script>
-        const shield = document.getElementById('portal-shield');
-        const statusText = document.getElementById('shield-status');
-        const spinner = document.getElementById('spinner-layer');
-        const iframe = document.getElementById('app-video-frame');
-        const topBar = document.getElementById('top-bar');
-        const skullLogo = document.getElementById('skull-logo');
+        const shield = document.getElementById('click-blocker');
+        const iframe = document.getElementById('media-frame');
 
+        // Continuous Loop JavaScript Window Interception Safeguards
+        window.open = function() { return null; };
+        document.open = function() { return null; };
+        window.onbeforeunload = function() { return "Shield active."; };
+
+        setInterval(() => {
+            try {
+                if (iframe && iframe.contentWindow) {
+                    iframe.contentWindow.open = function() { return null; };
+                    if (iframe.contentWindow.top !== window) {
+                        iframe.contentWindow.top = window;
+                    }
+                }
+            } catch(e) {
+                // Cross-Origin boundary exceptions handled quietly
+            }
+        }, 150);
+
+        // Extract Parameter Arguments
         const urlParams = new URLSearchParams(window.location.search);
         const imdbId = urlParams.get('id');
         const mediaType = urlParams.get('type') || 'movie';
-        const targetServer = urlParams.get('server') || '2';
+        const targetServer = urlParams.get('server') || '1';
         const s = String.fromCharCode(47); 
 
-        if (targetServer === '2') {
-            statusText.innerText = "PORTAL 2: VIDLINK ACTIVE";
-        } else {
-            statusText.innerText = "PORTAL 3: MULTIEMBED ACTIVE";
-        }
-
-        shield.addEventListener('click', function() {
-            shield.style.display = 'none';
-            topBar.style.display = 'none'; 
-            skullLogo.style.display = 'block';
+        // Universal Click Shield Handler: Intercepts the initial click, removes overlay, activates mobile fullscreen
+        shield.addEventListener('click', function(e) {
+            e.stopPropagation();
+            e.preventDefault();
             
-            // Mobile Native Fullscreen Request Trigger
-            const container = document.documentElement;
-            if (container.requestFullscreen) { container.requestFullscreen(); }
-            else if (container.webkitRequestFullscreen) { container.webkitRequestFullscreen(); }
-        });
+            // Drop interceptor layer immediately so player buttons are fully touch accessible
+            shield.style.display = 'none';
 
-        iframe.onload = function() {
-            spinner.style.display = 'none';
-        };
+            // Push display frame directly into Mobile Fullscreen Orientation layout
+            const wrapper = document.documentElement;
+            if (wrapper.requestFullscreen) { wrapper.requestFullscreen(); }
+            else if (wrapper.webkitRequestFullscreen) { wrapper.webkitRequestFullscreen(); }
+        }, true);
 
+        // Core Embed Mapping Array
         if (imdbId) {
+            const parts = imdbId.split(':');
+            const coreId = parts[0];
+            const season = parts[1] || '1';
+            const episode = parts[2] || '1';
+
+            let baseEndpoint = "";
+
             if (mediaType === 'movie') {
-                if (targetServer === '2') {
-                    iframe.src = "https:" + s + s + "vidlink.pro" + s + "embed" + s + "movie" + s + imdbId;
-                } else {
-                    iframe.src = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + imdbId;
-                }
+                // Movie Source Selector Configuration Map mirroring MovieIGuess servers
+                if (targetServer === '1') { baseEndpoint = "https:" + s + s + "vidlink.pro" + s + "embed" + s + "movie" + s + coreId; }
+                else if (targetServer === '2') { baseEndpoint = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "movie" + s + coreId; }
+                else if (targetServer === '3') { baseEndpoint = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + coreId; }
+                else if (targetServer === '4') { baseEndpoint = "https:" + s + s + "vidsrc.to" + s + "embed" + s + "movie" + s + coreId; }
+                else if (targetServer === '5') { baseEndpoint = "https:" + s + s + "vidsrc.cc" + s + "v2" + s + "embed" + s + "movie" + s + coreId; }
+                else if (targetServer === '6') { baseEndpoint = "https:" + s + s + "superembed.cc" + s + "movie" + s + coreId; }
+                else if (targetServer === '7') { baseEndpoint = "https:" + s + s + "www.2embed.cc" + s + "embed" + s + "movie" + s + coreId; }
+                else if (targetServer === '8') { baseEndpoint = "https:" + s + s + "autoembed.cc" + s + "movie" + s + coreId; }
+                else if (targetServer === '9') { baseEndpoint = "https:" + s + s + "vidsrc.pro" + s + "embed" + s + "movie" + s + coreId; }
+                else if (targetServer === '10') { baseEndpoint = "https:" + s + s + "embed.su" + s + "movie" + s + coreId; }
+                else if (targetServer === '11') { baseEndpoint = "https:" + s + s + "player.vidsrc.nl" + s + "movie" + s + coreId; }
+                else { baseEndpoint = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + coreId; }
             } else {
-                const parts = imdbId.split(':');
-                const showId = parts[0];
-                const season = parts[1] || '1';
-                const episode = parts[2] || '1';
-                
-                if (targetServer === '2') {
-                    iframe.src = "https:" + s + s + "vidlink.pro" + s + "embed" + s + "tv" + s + showId + s + season + s + episode;
-                } else {
-                    iframe.src = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + showId + "&s=" + season + "&e=" + episode;
-                }
+                // TV Series Source Selector Configuration Map mirroring MovieIGuess servers
+                if (targetServer === '1') { baseEndpoint = "https:" + s + s + "vidlink.pro" + s + "embed" + s + "tv" + s + coreId + s + season + s + episode; }
+                else if (targetServer === '2') { baseEndpoint = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "tv" + s + coreId + s + season + s + episode; }
+                else if (targetServer === '3') { baseEndpoint = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + coreId + "&s=" + season + "&e=" + episode; }
+                else if (targetServer === '4') { baseEndpoint = "https:" + s + s + "vidsrc.to" + s + "embed" + s + "tv" + s + coreId + s + season + s + episode; }
+                else if (targetServer === '5') { baseEndpoint = "https:" + s + s + "vidsrc.cc" + s + "v2" + s + "embed" + s + "tv" + s + coreId + s + season + s + episode; }
+                else if (targetServer === '6') { baseEndpoint = "https:" + s + s + "superembed.cc" + s + "tv" + s + coreId + s + season + s + episode; }
+                else if (targetServer === '7') { baseEndpoint = "https:" + s + s + "www.2embed.cc" + s + "embed" + s + "tv" + s + coreId + "&s=" + season + "&e=" + episode; }
+                else if (targetServer === '8') { baseEndpoint = "https:" + s + s + "autoembed.cc" + s + "tv" + s + coreId + s + season + s + episode; }
+                else if (targetServer === '9') { baseEndpoint = "https:" + s + s + "vidsrc.pro" + s + "embed" + s + "tv" + s + coreId + s + season + s + episode; }
+                else if (targetServer === '10') { baseEndpoint = "https:" + s + s + "embed.su" + s + "tv" + s + coreId + s + season + s + episode; }
+                else if (targetServer === '11') { baseEndpoint = "https:" + s + s + "player.vidsrc.nl" + s + "tv" + s + coreId + s + season + s + episode; }
+                else { baseEndpoint = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + coreId + "&s=" + season + "&e=" + episode; }
             }
+
+            iframe.src = baseEndpoint;
         }
     </script>
 </body>
