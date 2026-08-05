@@ -1,12 +1,12 @@
-// Skull Final Multi-Player Addon Core (Direct Video Links Update)
+// Skull Final Multi-Player Addon Core (MovieIGuess Matrix Update)
 const fs = require('fs');
 const path = require('path');
 
 const MANIFEST = {
     id: "org.heartive.skullfinalv3", 
-    version: "16.4.0", 
-    name: "skull Ultimate Player",
-    description: "⚡ Direct Video Engine: Ad-free native streams and fallback testing",
+    version: "16.6.0", 
+    name: "skull Multi-Server Engine",
+    description: "🛠️ Experimental multi-choice testing dashboard mirroring MovieIGuess upstream panels.",
     resources: ["stream"],
     types: ["movie", "series"],
     idPrefixes: ["tt"], 
@@ -21,13 +21,11 @@ module.exports = (req, res) => {
     const slash = String.fromCharCode(47);
     const domain = req.headers.host;
 
-    // 1. Deliver Manifest
     if (rawUrl === "/" || rawUrl.toLowerCase().includes("manifest.json")) {
         res.status(200).json(MANIFEST);
         return;
     }
 
-    // 2. Deliver player.html (Fallback Portal)
     if (rawUrl.toLowerCase().includes("player.html")) {
         try {
             const filePath = path.join(process.cwd(), 'player.html');
@@ -40,7 +38,7 @@ module.exports = (req, res) => {
         return;
     }
 
-    // 3. Movie Streams Router
+    // 🎬 Movie Routing Matrix
     if (rawUrl.toLowerCase().includes("/stream/movie/")) {
         const urlParts = rawUrl.split("?");
         const cleanPath = urlParts.shift();
@@ -48,24 +46,28 @@ module.exports = (req, res) => {
         const fileName = pathSegments.pop();
         const imdbId = fileName.replace(".json", "");
 
-        // 🔗 OPTION 1: Direct Video Link API (Plays directly inside Stremio - 100% AD FREE)
-        const directVideoUrl = "https:" + slash + slash + "vidsrc.cc" + slash + "v2" + slash + "embed" + slash + "movie" + slash + imdbId;
-
-        // Fallbacks using your player page
-        const portalUrlServer2 = "https:" + slash + slash + domain + slash + "player.html?type=movie&server=2&id=" + imdbId;
-        const portalUrlServer3 = "https:" + slash + slash + domain + slash + "player.html?type=movie&server=3&id=" + imdbId;
+        const link = (srvNum) => "https:" + slash + slash + domain + slash + "player.html?type=movie&server=" + srvNum + "&id=" + imdbId;
 
         res.status(200).json({
             streams: [
-                { title: "🚀 Option 1: Native Stream (Ad-Free, Auto Full Screen)", url: directVideoUrl },
-                { title: "💀 Option 2: Skull Shield Portal (VidLink HTML)", externalUrl: portalUrlServer2 },
-                { title: "💀 Option 3: Skull Shield Portal (Multiembed HTML)", externalUrl: portalUrlServer3 }
+                { title: "🛠️ [SERVER 1] Experimental Node (VidLink Core)", externalUrl: link(1) },
+                { title: "🛠️ [SERVER 2] Experimental Node (Vidsrc.me)", externalUrl: link(2) },
+                { title: "🛠️ [SERVER 3] Experimental Node (Multiembed Array)", externalUrl: link(3) },
+                { title: "🛠️ [SERVER 4] Experimental Node (Vidsrc.to / .xyz Mirror)", externalUrl: link(4) },
+                { title: "🛠️ [SERVER 5] Experimental Node (Vidsrc.cc API)", externalUrl: link(5) },
+                { title: "🛠️ [SERVER 6] Experimental Node (SuperEmbed Engine)", externalUrl: link(6) },
+                { title: "🛠️ [SERVER 7] Experimental Node (2Embed Proxy Link)", externalUrl: link(7) },
+                { title: "🛠️ [SERVER 8] Experimental Node (AutoEmbed API)", externalUrl: link(8) },
+                { title: "🛠️ [SERVER 9] Experimental Node (Non-Ad Stream Variant)", externalUrl: link(9) },
+                { title: "🛠️ [SERVER 10] Experimental Node (Alternative Mirror 10)", externalUrl: link(10) },
+                { title: "🛠️ [SERVER 11] Experimental Node (Alternative Mirror 11)", externalUrl: link(11) },
+                { title: "🛠️ [SERVER 12] Experimental Node (Alternative Mirror 12)", externalUrl: link(12) }
             ]
         });
         return;
     }
 
-    // 4. TV Series Streams Router
+    // 📺 TV Series Routing Matrix
     if (rawUrl.toLowerCase().includes("/stream/series/")) {
         const urlParts = rawUrl.split("?");
         const cleanPath = urlParts.shift();
@@ -73,22 +75,22 @@ module.exports = (req, res) => {
         const fileName = pathSegments.pop();
         const fullId = fileName.replace(".json", ""); 
 
-        const idParts = fullId.split(":");
-        const imdbId = idParts[0];
-        const season = idParts[1] || "1";
-        const episode = idParts[2] || "1";
-
-        // 🔗 OPTION 1: Direct Video Link API for TV Series
-        const directVideoUrl = "https:" + slash + slash + "vidsrc.cc" + slash + "v2" + slash + "embed" + slash + "tv" + slash + imdbId + slash + season + slash + episode;
-
-        const portalUrlServer2 = "https:" + slash + slash + domain + slash + "player.html?type=series&server=2&id=" + fullId;
-        const portalUrlServer3 = "https:" + slash + slash + domain + slash + "player.html?type=series&server=3&id=" + fullId;
+        const link = (srvNum) => "https:" + slash + slash + domain + slash + "player.html?type=series&server=" + srvNum + "&id=" + fullId;
 
         res.status(200).json({
             streams: [
-                { title: "🚀 Option 1: Native Stream (Ad-Free, Auto Full Screen)", url: directVideoUrl },
-                { title: "💀 Option 2: Skull Shield Portal (VidLink HTML)", externalUrl: portalUrlServer2 },
-                { title: "💀 Option 3: Skull Shield Portal (Multiembed HTML)", externalUrl: portalUrlServer3 }
+                { title: "🛠️ [SERVER 1] Experimental Node (VidLink Core)", externalUrl: link(1) },
+                { title: "🛠️ [SERVER 2] Experimental Node (Vidsrc.me)", externalUrl: link(2) },
+                { title: "🛠️ [SERVER 3] Experimental Node (Multiembed Array)", externalUrl: link(3) },
+                { title: "🛠️ [SERVER 4] Experimental Node (Vidsrc.to / .xyz Mirror)", externalUrl: link(4) },
+                { title: "🛠️ [SERVER 5] Experimental Node (Vidsrc.cc API)", externalUrl: link(5) },
+                { title: "🛠️ [SERVER 6] Experimental Node (SuperEmbed Engine)", externalUrl: link(6) },
+                { title: "🛠️ [SERVER 7] Experimental Node (2Embed Proxy Link)", externalUrl: link(7) },
+                { title: "🛠️ [SERVER 8] Experimental Node (AutoEmbed API)", externalUrl: link(8) },
+                { title: "🛠️ [SERVER 9] Experimental Node (Non-Ad Stream Variant)", externalUrl: link(9) },
+                { title: "🛠️ [SERVER 10] Experimental Node (Alternative Mirror 10)", externalUrl: link(10) },
+                { title: "🛠️ [SERVER 11] Experimental Node (Alternative Mirror 11)", externalUrl: link(11) },
+                { title: "🛠️ [SERVER 12] Experimental Node (Alternative Mirror 12)", externalUrl: link(12) }
             ]
         });
         return;
