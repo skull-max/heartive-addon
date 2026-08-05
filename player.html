@@ -34,6 +34,7 @@
             align-items: center;
             border-bottom: 2px solid #45f3ff;
             z-index: 10;
+            transition: all 0.5s ease; /* Smooth transition when disappearing */
         }
         .title {
             font-size: 16px;
@@ -99,12 +100,28 @@
             font-weight: bold;
             text-shadow: 0 0 5px #45f3ff;
         }
+
+        /* 💀 New Dull Skull Watermark Logo */
+        .skull-watermark {
+            position: absolute;
+            bottom: 15px;
+            left: 15px;
+            font-size: 24px;
+            color: rgba(255, 255, 255, 0.15); /* Very faint and dull */
+            font-weight: bold;
+            z-index: 8;
+            pointer-events: none; /* Prevents blocking clicks to video player elements */
+            user-select: none;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.8);
+            display: none; /* Hidden until shield is unlocked */
+        }
     </style>
 </head>
 <body>
 
     <div class="app-container">
-        <div class="top-bar">
+        <!-- Added id="top-bar" to easily collapse it in javascript -->
+        <div id="top-bar" class="top-bar">
             <span class="title">💀 SKULL PORTAL PLAYER</span>
             <span id="shield-status" style="font-size: 12px; color: #45f3ff; font-weight: bold;">Shield Core Loading...</span>
         </div>
@@ -116,6 +133,9 @@
                 <div class="loading-text">CACHING LINK MATRIX...</div>
             </div>
 
+            <!-- Faint skull indicator in the lower-left corner -->
+            <div id="skull-logo" class="skull-watermark">💀</div>
+
             <iframe id="app-video-frame" src="" allowfullscreen referrerpolicy="no-referrer"></iframe>
         </div>
     </div>
@@ -125,6 +145,8 @@
         const statusText = document.getElementById('shield-status');
         const spinner = document.getElementById('spinner-layer');
         const iframe = document.getElementById('app-video-frame');
+        const topBar = document.getElementById('top-bar');
+        const skullLogo = document.getElementById('skull-logo');
 
         window.open = function() { return null; };
         window.onbeforeunload = function() { return "Shield active."; };
@@ -143,6 +165,12 @@
             statusText.innerText = "INFINITE TIME SHIELD ACTIVE";
         }
 
+        // Helper function to hide the top bar and bring up the dull logo watermark
+        function collapseInterface() {
+            topBar.style.display = 'none'; // Instantly removes top bar space
+            skullLogo.style.display = 'block'; // Shows the faint skull watermark in the corner
+        }
+
         // === DUAL INTERCEPTOR SHIELD ROUTER ===
         shield.addEventListener('click', function(e) {
             e.stopPropagation();
@@ -151,17 +179,19 @@
             if (targetServer === '1') {
                 // SERVER 1 (Option 2): Single Absorb Layer. Disappears after 1 tap.
                 shield.style.display = 'none';
-                statusText.innerText = "Shield Passed - Controls Unlocked";
-                statusText.style.color = "#66fcf1";
+                collapseInterface(); // Hides interface layout
             } else {
                 // SERVER 2 (Option 3): Infinite Time Cooldown Shield. Drops for 0.5s, then locks back!
                 statusText.innerText = "POPUP DEFLECTED";
                 statusText.style.color = "#ff4545";
                 
                 shield.style.display = 'none';
+                collapseInterface(); // Hides interface layouts upon the first blocking click
                 
                 setTimeout(() => {
                     shield.style.display = 'block';
+                    // Optional: If you want top bar to stay hidden permanently, leave this commented out.
+                    // topBar.style.display = 'flex'; 
                     statusText.innerText = "INFINITE TIME SHIELD RE-ENGAGED";
                     statusText.style.color = "#45f3ff";
                 }, 500);
@@ -173,10 +203,11 @@
             setTimeout(() => { spinner.style.display = 'none'; }, 500);
         };
 
+        // Restored your precise original multiembed and parsing string setups
         if (imdbId) {
             if (mediaType === 'movie') {
                 if (targetServer === '1') {
-                    iframe.src = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "movie" + s + imdbId;
+                    iframe.src = "https:" + s + s + "vidlink.pro" + s + "embed" + s + "movie" + s + imdbId;
                 } else {
                     iframe.src = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + imdbId;
                 }
@@ -187,7 +218,7 @@
                 const episode = parts.shift() || '1';
                 
                 if (targetServer === '1') {
-                    iframe.src = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "tv" + s + showId + s + season + s + episode;
+                    iframe.src = "https:" + s + s + "vidlink.pro" + s + "embed" + s + "tv" + s + showId + s + season + s + episode;
                 } else {
                     iframe.src = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + showId + "&s=" + season + "&e=" + episode;
                 }
