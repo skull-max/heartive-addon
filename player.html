@@ -27,7 +27,6 @@
             border: none;
             z-index: 1;
         }
-        /* Invisible Transparent Shield covering entire video viewport */
         .invisible-interceptor {
             position: absolute;
             top: 0;
@@ -39,30 +38,54 @@
             background: transparent;
             display: block;
         }
-        /* 💀 Permanent Dull Floating Skull Stamp Logo */
+        
+        /* 💡 Upgraded Neon Light Effect Watermark */
         .skull-watermark-stamp {
             position: absolute;
-            bottom: 20px;
-            left: 20px;
-            font-size: 28px;
-            color: rgba(255, 255, 255, 0.12); /* Extremely faint and dull */
-            font-weight: bold;
+            bottom: 25px;
+            left: 25px;
+            font-size: 32px;
             z-index: 10;
-            pointer-events: none; /* Allows natural player control taps to pass directly under icon */
+            pointer-events: none; 
             user-select: none;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.9);
+            opacity: 0;
+            animation: neonPulseFade 4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        /* Neon light up and fade keyframes sequence */
+        @keyframes neonPulseFade {
+            0% {
+                opacity: 0;
+                text-shadow: none;
+            }
+            15% {
+                opacity: 1;
+                text-shadow: 0 0 5px #fff, 0 0 10px #fff, 0 0 20px #45f3ff, 0 0 30px #45f3ff, 0 0 40px #45f3ff;
+            }
+            30% {
+                opacity: 0.7;
+                text-shadow: 0 0 2px #fff, 0 0 6px #45f3ff, 0 0 15px #45f3ff;
+            }
+            45% {
+                opacity: 1;
+                text-shadow: 0 0 5px #fff, 0 0 12px #fff, 0 0 25px #45f3ff, 0 0 35px #45f3ff;
+            }
+            75% {
+                opacity: 0.8;
+                text-shadow: 0 0 3px #45f3ff, 0 0 10px #45f3ff;
+            }
+            100% {
+                opacity: 0;
+                display: none;
+            }
         }
     </style>
 </head>
 <body>
 
     <div class="viewport-wrapper">
-        <!-- Tap blocker layer -->
         <div id="click-blocker" class="invisible-interceptor"></div>
-        
-        <!-- Permanent logo -->
         <div class="skull-watermark-stamp">💀</div>
-
         <iframe id="media-frame" src="" allowfullscreen="true" webkitallowfullscreen="true" mozallowfullscreen="true" referrerpolicy="no-referrer"></iframe>
     </div>
 
@@ -70,7 +93,6 @@
         const shield = document.getElementById('click-blocker');
         const iframe = document.getElementById('media-frame');
 
-        // Continuous Loop JavaScript Window Interception Safeguards
         window.open = function() { return null; };
         document.open = function() { return null; };
         window.onbeforeunload = function() { return "Shield active."; };
@@ -83,33 +105,25 @@
                         iframe.contentWindow.top = window;
                     }
                 }
-            } catch(e) {
-                // Cross-Origin boundary exceptions handled quietly
-            }
+            } catch(e) {}
         }, 150);
 
-        // Extract Parameter Arguments
         const urlParams = new URLSearchParams(window.location.search);
         const imdbId = urlParams.get('id');
         const mediaType = urlParams.get('type') || 'movie';
         const targetServer = urlParams.get('server') || '1';
         const s = String.fromCharCode(47); 
 
-        // Universal Click Shield Handler: Intercepts the initial click, removes overlay, activates mobile fullscreen
         shield.addEventListener('click', function(e) {
             e.stopPropagation();
             e.preventDefault();
-            
-            // Drop interceptor layer immediately so player buttons are fully touch accessible
             shield.style.display = 'none';
 
-            // Push display frame directly into Mobile Fullscreen Orientation layout
             const wrapper = document.documentElement;
             if (wrapper.requestFullscreen) { wrapper.requestFullscreen(); }
             else if (wrapper.webkitRequestFullscreen) { wrapper.webkitRequestFullscreen(); }
         }, true);
 
-        // Core Embed Mapping Array
         if (imdbId) {
             const parts = imdbId.split(':');
             const coreId = parts[0];
@@ -119,7 +133,6 @@
             let baseEndpoint = "";
 
             if (mediaType === 'movie') {
-                // Movie Source Selector Configuration Map mirroring MovieIGuess servers
                 if (targetServer === '1') { baseEndpoint = "https:" + s + s + "vidlink.pro" + s + "embed" + s + "movie" + s + coreId; }
                 else if (targetServer === '2') { baseEndpoint = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "movie" + s + coreId; }
                 else if (targetServer === '3') { baseEndpoint = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + coreId; }
@@ -133,7 +146,6 @@
                 else if (targetServer === '11') { baseEndpoint = "https:" + s + s + "player.vidsrc.nl" + s + "movie" + s + coreId; }
                 else { baseEndpoint = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + coreId; }
             } else {
-                // TV Series Source Selector Configuration Map mirroring MovieIGuess servers
                 if (targetServer === '1') { baseEndpoint = "https:" + s + s + "vidlink.pro" + s + "embed" + s + "tv" + s + coreId + s + season + s + episode; }
                 else if (targetServer === '2') { baseEndpoint = "https:" + s + s + "vidsrc.me" + s + "embed" + s + "tv" + s + coreId + s + season + s + episode; }
                 else if (targetServer === '3') { baseEndpoint = "https:" + s + s + "multiembed.mov" + s + "?video_id=" + coreId + "&s=" + season + "&e=" + episode; }
