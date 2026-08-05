@@ -50,18 +50,18 @@ module.exports = (req, res) => {
 
         res.status(200).json({
             streams: [
-                { title: "🛠️ [SERVER 1] Experimental Node (VidLink Core)", externalUrl: link(1) },
-                { title: "🛠️ [SERVER 2] Experimental Node (Vidsrc.me)", externalUrl: link(2) },
-                { title: "🛠️ [SERVER 3] Experimental Node (Multiembed Array)", externalUrl: link(3) },
-                { title: "🛠️ [SERVER 4] Experimental Node (Vidsrc.to / .xyz Mirror)", externalUrl: link(4) },
-                { title: "🛠️ [SERVER 5] Experimental Node (Vidsrc.cc API)", externalUrl: link(5) },
-                { title: "🛠️ [SERVER 6] Experimental Node (SuperEmbed Engine)", externalUrl: link(6) },
-                { title: "🛠️ [SERVER 7] Experimental Node (2Embed Proxy Link)", externalUrl: link(7) },
-                { title: "🛠️ [SERVER 8] Experimental Node (AutoEmbed API)", externalUrl: link(8) },
-                { title: "🛠️ [SERVER 9] Experimental Node (Non-Ad Stream Variant)", externalUrl: link(9) },
-                { title: "🛠️ [SERVER 10] Experimental Node (Alternative Mirror 10)", externalUrl: link(10) },
-                { title: "🛠️ [SERVER 11] Experimental Node (Alternative Mirror 11)", externalUrl: link(11) },
-                { title: "🛠️ [SERVER 12] Experimental Node (Alternative Mirror 12)", externalUrl: link(12) }
+                { title: "🛠️ [SERVER 1] Experimental Node ", externalUrl: link(1) },
+                { title: "🛠️ [SERVER 2] Experimental Node ", externalUrl: link(2) },
+                { title: "🛠️ [SERVER 3] Experimental Node ", externalUrl: link(3) },
+                { title: "🛠️ [SERVER 4] Experimental Node ", externalUrl: link(4) },
+                { title: "🛠️ [SERVER 5] Experimental Node ", externalUrl: link(5) },
+                { title: "🛠️ [SERVER 6] Experimental Node ", externalUrl: link(6) },
+                { title: "🛠️ [SERVER 7] Experimental Node ", externalUrl: link(7) },
+                { title: "🛠️ [SERVER 8] Experimental Node ", externalUrl: link(8) },
+                { title: "🛠️ [SERVER 9] Experimental Node ", externalUrl: link(9) },
+                { title: "🛠️ [SERVER 10] Experimental Node ", externalUrl: link(10) },
+                { title: "🛠️ [SERVER 11] Experimental Node ", externalUrl: link(11) },
+                { title: "🛠️ [SERVER 12] Experimental Node ", externalUrl: link(12) }
             ]
         });
         return;
@@ -79,18 +79,18 @@ module.exports = (req, res) => {
 
         res.status(200).json({
             streams: [
-                { title: "🛠️ [SERVER 1] Experimental Node (VidLink Core)", externalUrl: link(1) },
-                { title: "🛠️ [SERVER 2] Experimental Node (Vidsrc.me)", externalUrl: link(2) },
-                { title: "🛠️ [SERVER 3] Experimental Node (Multiembed Array)", externalUrl: link(3) },
-                { title: "🛠️ [SERVER 4] Experimental Node (Vidsrc.to / .xyz Mirror)", externalUrl: link(4) },
-                { title: "🛠️ [SERVER 5] Experimental Node (Vidsrc.cc API)", externalUrl: link(5) },
-                { title: "🛠️ [SERVER 6] Experimental Node (SuperEmbed Engine)", externalUrl: link(6) },
-                { title: "🛠️ [SERVER 7] Experimental Node (2Embed Proxy Link)", externalUrl: link(7) },
-                { title: "🛠️ [SERVER 8] Experimental Node (AutoEmbed API)", externalUrl: link(8) },
-                { title: "🛠️ [SERVER 9] Experimental Node (Non-Ad Stream Variant)", externalUrl: link(9) },
-                { title: "🛠️ [SERVER 10] Experimental Node (Alternative Mirror 10)", externalUrl: link(10) },
-                { title: "🛠️ [SERVER 11] Experimental Node (Alternative Mirror 11)", externalUrl: link(11) },
-                { title: "🛠️ [SERVER 12] Experimental Node (Alternative Mirror 12)", externalUrl: link(12) }
+                { title: "🛠️ [SERVER 1] Experimental Node ", externalUrl: link(1) },
+                { title: "🛠️ [SERVER 2] Experimental Node ", externalUrl: link(2) },
+                { title: "🛠️ [SERVER 3] Experimental Node ", externalUrl: link(3) },
+                { title: "🛠️ [SERVER 4] Experimental Node ", externalUrl: link(4) },
+                { title: "🛠️ [SERVER 5] Experimental Node ", externalUrl: link(5) },
+                { title: "🛠️ [SERVER 6] Experimental Node ", externalUrl: link(6) },
+                { title: "🛠️ [SERVER 7] Experimental Node ", externalUrl: link(7) },
+                { title: "🛠️ [SERVER 8] Experimental Node ", externalUrl: link(8) },
+                { title: "🛠️ [SERVER 9] Experimental Node ", externalUrl: link(9) },
+                { title: "🛠️ [SERVER 10] Experimental Node ", externalUrl: link(10) },
+                { title: "🛠️ [SERVER 11] Experimental Node ", externalUrl: link(11) },
+                { title: "🛠️ [SERVER 12] Experimental Node ", externalUrl: link(12) }
             ]
         });
         return;
